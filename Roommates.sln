@@ -5,6 +5,8 @@ VisualStudioVersion = 17.5.33516.290
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Roommates.API", "Roommates.API\Roommates.API.csproj", "{BAB6B0FB-21A8-42EA-A59B-DC7F47D6784A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Roommates.Domain", "Roommates.Domain\Roommates.Domain.csproj", "{C8B852F2-EAA5-4ADE-BC36-7508FA00B3BE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{BAB6B0FB-21A8-42EA-A59B-DC7F47D6784A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BAB6B0FB-21A8-42EA-A59B-DC7F47D6784A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BAB6B0FB-21A8-42EA-A59B-DC7F47D6784A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8B852F2-EAA5-4ADE-BC36-7508FA00B3BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8B852F2-EAA5-4ADE-BC36-7508FA00B3BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8B852F2-EAA5-4ADE-BC36-7508FA00B3BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8B852F2-EAA5-4ADE-BC36-7508FA00B3BE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
