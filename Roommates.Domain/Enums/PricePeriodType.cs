@@ -1,7 +1,7 @@
 ﻿
 namespace Roommates.Domain.Enums
 {
-    public enum PriceType
+    public enum PricePeriodType
     {
         Daily,
         Monthly,
