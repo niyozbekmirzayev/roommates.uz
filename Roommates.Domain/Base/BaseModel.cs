@@ -13,6 +13,6 @@ namespace Roommates.Domain.Base
         public DateTime? LastModifiedDate { get; set; }
 
         [JsonConverter(typeof(StringEnumConverter))]
-        EntityState EntityState { get; set; }
+        EntityState EntityState { get; set; } = EntityState.Active;
     }
 }

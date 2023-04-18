@@ -4,6 +4,7 @@ using Roommates.Domain;
 using Roommates.Domain.Base;
 using Roommates.Domain.Enums;
 using Roommates.Domain.Models;
+using Roommates.Domain.Models.Locations;
 using Roommates.Domain.Models.Posts;
 using Roommates.Domain.Models.Roommates;
 using System.ComponentModel.DataAnnotations;
@@ -25,13 +26,25 @@ namespace Roommates.Domain.Models.Posts
         public string Description { get; set; }
 
         [Required]
-        public string Location { get; set; }
+        public Location Location { get; set; }
+
+        public string? Address { get; set; }
 
         [Required]
         public decimal Price { get; set; }
 
         [Required]
+        public short RoomsCount { get; set; }
+
+        [Required]
         public bool IsForSelling { get; set; } = false;
+
+        [Required]
+        public long ViewedTime { get; set; }
+
+        [Required]
+        [JsonConverter(typeof(StringEnumConverter))]
+        public Gender PreferedRoommateGender { get; set; } = Gender.NotSpecified;
 
         [Required]
         [JsonConverter(typeof(StringEnumConverter))]
@@ -46,6 +59,7 @@ namespace Roommates.Domain.Models.Posts
         public Guid CreatedByRoommateId { get; set; }
 
         #region ForeignKeys
+
         [NotMapped]
         public Roommate CreatedByRoommate { get; set; }
 
