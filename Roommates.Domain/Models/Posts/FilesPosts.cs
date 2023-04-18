@@ -5,6 +5,7 @@ using Roommates.Domain.Models;
 using Roommates.Domain.Models.Files;
 using Roommates.Domain.Models.Posts;
 using System.ComponentModel.DataAnnotations.Schema;
+using File = Roommates.Domain.Models.Files.File;
 
 namespace Roommates.Domain.Models.Posts
 {
