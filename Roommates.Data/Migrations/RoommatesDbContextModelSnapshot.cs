@@ -48,7 +48,6 @@ namespace Roommates.Data.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<byte[]>("Content")
-                        .IsRequired()
                         .HasColumnType("bytea");
 
                     b.Property<DateTime>("CreatedDate")
@@ -58,14 +57,12 @@ namespace Roommates.Data.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("Extension")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime?>("LastModifiedDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("MimeType")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Name")
@@ -172,7 +169,7 @@ namespace Roommates.Data.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("numeric");
 
-                    b.Property<int>("PricePeriodType")
+                    b.Property<int?>("PricePeriodType")
                         .HasColumnType("integer");
 
                     b.Property<short>("RoomsCount")
@@ -201,7 +198,6 @@ namespace Roommates.Data.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("Bio")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedDate")
@@ -224,11 +220,9 @@ namespace Roommates.Data.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("LastName")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("PhoneNumber")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<Guid?>("ProfilePictureFileId")

@@ -9,7 +9,10 @@ namespace Roommates.Domain.Base
     {
         [Key]
         public Guid Id { get; set; }
-        public DateTime CreatedDate { get; set; } = DateTime.Now;
+
+        [Required]
+        public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
+
         public DateTime? LastModifiedDate { get; set; }
     }
 }

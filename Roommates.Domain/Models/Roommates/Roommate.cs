@@ -19,18 +19,18 @@ namespace Roommates.Domain.Models.Roommates
         [Required]
         public string FirstName { get; set; }
 
-        public string LastName { get; set; }
+        public string? LastName { get; set; }
 
-        [JsonConverter(typeof(StringEnumConverter))]
         public Gender? Gender { get; set; }
 
-        public string PhoneNumber { get; set; }
+        public string? PhoneNumber { get; set; }
 
+        [Required]
         public bool IsPhoneNumberVerified { get; set; } = false;
 
-        public string Bio { get; set; }
+        public string? Bio { get; set; }
 
-        [JsonConverter(typeof(StringEnumConverter))]
+        [Required]
         public EntityState EntityState { get; set; } = EntityState.Active;
 
         #region ForeignKeys

@@ -19,7 +19,6 @@ namespace Roommates.Domain.Models.Posts
         public string Title { get; set; }
 
         [Required]
-        [JsonConverter(typeof(StringEnumConverter))]
         PostType PostType { get; set; } = PostType.Apartment;
 
         [Required]
@@ -40,25 +39,20 @@ namespace Roommates.Domain.Models.Posts
         public bool IsForSelling { get; set; } = false;
 
         [Required]
-        public long ViewedTime { get; set; }
+        public long ViewedTime { get; set; } = 0;
 
         [Required]
-        [JsonConverter(typeof(StringEnumConverter))]
         public Gender PreferedRoommateGender { get; set; } = Gender.NotSpecified;
 
-        [Required]
-        [JsonConverter(typeof(StringEnumConverter))]
         public PricePeriodType? PricePeriodType { get; set; }
 
         [Required]
-        [JsonConverter(typeof(StringEnumConverter))]
         public CurrencyType CurrencyType { get; set; }
 
         [Required]
-        [ForeignKey(nameof(CreatedByRoommate))]
         public Guid CreatedByRoommateId { get; set; }
 
-        [JsonConverter(typeof(StringEnumConverter))]
+        [Required]
         public EntityState EntityState { get; set; } = EntityState.Active;
 
         #region ForeignKeys

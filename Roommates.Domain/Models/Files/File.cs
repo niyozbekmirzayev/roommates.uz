@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+﻿using Newtonsoft.Json.Converters;
 using Roommates;
 using Roommates.Domain;
 using Roommates.Domain.Base;
@@ -17,13 +16,13 @@ namespace Roommates.Domain.Models.Files
         [Required]
         public string Name { get; set; }
 
-        public string Extension { get; set; }
+        public string? Extension { get; set; }
 
-        public byte[] Content { get; set; }
+        public byte[]? Content { get; set; }
 
-        public string MimeType { get; set; }
+        public string? MimeType { get; set; }
 
-        [JsonConverter(typeof(StringEnumConverter))]
+        [Required]
         public EntityState EntityState { get; set; } = EntityState.Active;
 
         [Required]
