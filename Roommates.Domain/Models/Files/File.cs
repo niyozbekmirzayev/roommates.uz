@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Converters;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Roommates;
 using Roommates.Domain;
 using Roommates.Domain.Base;
@@ -8,7 +9,6 @@ using Roommates.Domain.Models.Files;
 using Roommates.Domain.Models.Roommates;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json.Serialization;
 
 namespace Roommates.Domain.Models.Files
 {
