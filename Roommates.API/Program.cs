@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Roommates.Data;
+using Roommates.Data.IRepositories;
+using Roommates.Data.Repositories;
 
 namespace Roommates.API
 {
@@ -14,7 +16,13 @@ namespace Roommates.API
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            builder.Services.AddScoped<IRoommateRepository, RoommateRepository>();
+            builder.Services.AddScoped<IPostRepository, PostRepository>();
+            builder.Services.AddScoped<ILocationRepository, LocationRepository>();
+            builder.Services.AddScoped<IFileRepository, FileRepository>();
+
             builder.Services.AddDbContext<RoommatesDbContext>(o => o.UseNpgsql(builder.Configuration.GetConnectionString("Postgre")));
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -27,7 +35,6 @@ namespace Roommates.API
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
-
 
             app.MapControllers();
 

@@ -9,12 +9,16 @@ namespace Roommates.Data
 {
     public class RoommatesDbContext : DbContext
     {
+        public string schemaName = "roomates";
+
         public RoommatesDbContext(DbContextOptions<RoommatesDbContext> options) : base(options)
         {
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.HasDefaultSchema(schemaName);
+
             modelBuilder.Entity<Post>()
                 .HasMany(e => e.LikedByRoommates)
                 .WithMany(e => e.LikedPosts);
