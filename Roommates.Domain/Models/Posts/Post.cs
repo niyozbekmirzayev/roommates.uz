@@ -13,7 +13,7 @@ using System.Text.Json.Serialization;
 
 namespace Roommates.Domain.Models.Posts
 {
-    public class Post : BaseModel
+    public class Post : BaseModel, IPersistentEntity
     {
         [Required]
         public string Title { get; set; }
@@ -57,6 +57,9 @@ namespace Roommates.Domain.Models.Posts
         [Required]
         [ForeignKey(nameof(CreatedByRoommate))]
         public Guid CreatedByRoommateId { get; set; }
+
+        [JsonConverter(typeof(StringEnumConverter))]
+        public EntityState EntityState { get; set; } = EntityState.Active;
 
         #region ForeignKeys
 

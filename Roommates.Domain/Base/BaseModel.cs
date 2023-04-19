@@ -11,8 +11,5 @@ namespace Roommates.Domain.Base
         public Guid Id { get; set; }
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         public DateTime? LastModifiedDate { get; set; }
-
-        [JsonConverter(typeof(StringEnumConverter))]
-        EntityState EntityState { get; set; } = EntityState.Active;
     }
 }

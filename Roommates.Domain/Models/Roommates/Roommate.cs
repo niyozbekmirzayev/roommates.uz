@@ -14,7 +14,7 @@ using File = Roommates.Domain.Models.Files.File;
 
 namespace Roommates.Domain.Models.Roommates
 {
-    public class Roommate : BaseModel
+    public class Roommate : BaseModel, IPersistentEntity
     {
         [Required]
         public string FirstName { get; set; }
@@ -29,6 +29,9 @@ namespace Roommates.Domain.Models.Roommates
         public bool IsPhoneNumberVerified { get; set; } = false;
 
         public string Bio { get; set; }
+
+        [JsonConverter(typeof(StringEnumConverter))]
+        public EntityState EntityState { get; set; } = EntityState.Active;
 
         #region ForeignKeys
 
