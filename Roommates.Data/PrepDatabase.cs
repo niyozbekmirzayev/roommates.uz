@@ -33,6 +33,8 @@ namespace Roommates.Data
                 bool addSeedData = bool.Parse(seedDataInfo);
                 if (addSeedData && !dbContext.Roommates.Any())
                 {
+                    Console.WriteLine("Seeding database");
+
                     var posts = new List<Post>()
                     {
                         new Post()
