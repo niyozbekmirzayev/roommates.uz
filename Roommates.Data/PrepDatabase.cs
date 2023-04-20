@@ -14,8 +14,8 @@ namespace Roommates.Data
 {
     public class PrepDatabase
     {
-        public IConfiguration configuration;
-        public RoommatesDbContext dbContext;
+        public readonly IConfiguration configuration;
+        public readonly RoommatesDbContext dbContext;
 
         public PrepDatabase(IConfiguration configuration, RoommatesDbContext dbContext)
         {

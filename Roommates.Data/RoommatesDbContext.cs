@@ -9,7 +9,7 @@ namespace Roommates.Data
 {
     public class RoommatesDbContext : DbContext
     {
-        public string schemaName = "roomates";
+        public const string SCHEMA_NAME = "roomates";
 
         public RoommatesDbContext(DbContextOptions<RoommatesDbContext> options) : base(options)
         {
@@ -17,7 +17,7 @@ namespace Roommates.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.HasDefaultSchema(schemaName);
+            modelBuilder.HasDefaultSchema(SCHEMA_NAME);
 
             modelBuilder.Entity<Post>()
                 .HasMany(e => e.LikedByRoommates)
