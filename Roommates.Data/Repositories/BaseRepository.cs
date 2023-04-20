@@ -42,9 +42,9 @@ namespace Roommates.Data.Repositories
             await DbContext.AddRangeAsync(entities);
         }
 
-        public virtual IQueryable<TEntity> GetAll()
+        public virtual IQueryable<TEntity> GetAll(bool includeRemovedEntities = false)
         {
-            if (typeof(TEntity).GetInterfaces().Contains(typeof(IPersistentEntity)))
+            if (typeof(TEntity).GetInterfaces().Contains(typeof(IPersistentEntity)) && includeRemovedEntities == false)
             {
                 return Entities.Where(l => (l as IPersistentEntity).EntityState == Domain.Enums.EntityState.Active);
             }
@@ -52,12 +52,11 @@ namespace Roommates.Data.Repositories
             return Entities;
         }
 
-        public async Task<TEntity> GetAsync(Guid id)
+        public async Task<TEntity> GetAsync(Guid id, bool includeRemovedEntities = false)
         {
             var entity = await Entities.FindAsync(id);
 
-            if (entity != null && entity is IPersistentEntity &&
-                (entity as IPersistentEntity).EntityState == Domain.Enums.EntityState.Inactive)
+            if (entity != null && entity is IPersistentEntity && (entity as IPersistentEntity).EntityState == Domain.Enums.EntityState.Inactive && includeRemovedEntities == false)
             {
                 return null;
             }
