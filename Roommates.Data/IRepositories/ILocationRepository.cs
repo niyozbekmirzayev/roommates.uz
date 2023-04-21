@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Roommates.Data.IRepositories
 {
-    public interface ILocationRepository : IBaseRepository<Location, RoommatesDbContext>
+    public interface ILocationRepository : IBaseRepository<Location, ApplicationDbContext>
     {
     }
 }

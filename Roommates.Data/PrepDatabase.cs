@@ -15,9 +15,9 @@ namespace Roommates.Data
     public class PrepDatabase
     {
         public readonly IConfiguration configuration;
-        public readonly RoommatesDbContext dbContext;
+        public readonly ApplicationDbContext dbContext;
 
-        public PrepDatabase(IConfiguration configuration, RoommatesDbContext dbContext)
+        public PrepDatabase(IConfiguration configuration, ApplicationDbContext dbContext)
         {
             this.configuration = configuration;
             this.dbContext = dbContext;
@@ -31,7 +31,7 @@ namespace Roommates.Data
             if (!string.IsNullOrEmpty(seedDataInfo))
             {
                 bool addSeedData = bool.Parse(seedDataInfo);
-                if (addSeedData && !dbContext.Roommates.Any())
+                if (addSeedData && !dbContext.Users.Any())
                 {
                     Console.WriteLine("Seeding database");
 
@@ -43,7 +43,7 @@ namespace Roommates.Data
                              Address = "New York, Wall Street, 54",
                              IsForSelling = false,
                              Description = "Good and peace place",
-                             PreferedRoommateGender = Gender.NotSpecified,
+                             PreferedUserGender = Gender.NotSpecified,
                              ViewedTime = 1,
                              CurrencyType = CurrencyType.USD,
                              Price = 2000,
@@ -58,30 +58,36 @@ namespace Roommates.Data
                         }
                     };
 
-                    var roommates = new List<Roommate>()
+                    var users = new List<User>()
                     {
-                        new Roommate()
+                        new User()
                         {
                             FirstName = "Clear",
                             LastName = "Adams",
                             Gender = Gender.Female,
                             PhoneNumber = "7857485748",
+                            Email = "clearadms@gmail.com",
+                            IsEmailVerified = true,
+                            Password = "fakepassword",
                             IsPhoneNumberVerified = false,
                             LikedPosts = posts,
                         },
-                        new Roommate()
+                        new User()
                         {
                             FirstName = "John",
                             LastName = "Doe",
                             Gender = Gender.Male,
                             PhoneNumber = "7857353448",
+                            Email = "johndoe@gmail.com",
+                            IsEmailVerified = true,
                             IsPhoneNumberVerified = true,
+                            Password = "fakepassword",
                             OwnPosts = posts,
                         },
 
                     };
 
-                    dbContext.Roommates.AddRange(roommates);
+                    dbContext.Users.AddRange(users);
 
                     dbContext.SaveChanges();
                 }

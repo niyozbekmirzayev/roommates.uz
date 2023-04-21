@@ -14,7 +14,7 @@ using File = Roommates.Domain.Models.Files.File;
 
 namespace Roommates.Domain.Models.Roommates
 {
-    public class Roommate : BaseModel, IPersistentEntity
+    public class User : BaseModel, IPersistentEntity
     {
         [Required]
         public string FirstName { get; set; }
@@ -27,6 +27,15 @@ namespace Roommates.Domain.Models.Roommates
 
         [Required]
         public bool IsPhoneNumberVerified { get; set; } = false;
+
+        [Required]
+        public string Email { get; set; }
+
+        [Required]
+        public bool IsEmailVerified { get; set; } = false;
+
+        [Required] // Now required, but later will not be.....
+        public string Password { get; set; }
 
         public string? Bio { get; set; }
 

@@ -1,5 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
-using System;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -13,6 +13,23 @@ namespace Roommates.Data.Migrations
                 name: "roomates");
 
             migrationBuilder.CreateTable(
+                name: "EmailVerifications",
+                schema: "roomates",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Email = table.Column<string>(type: "text", nullable: false),
+                    VerificationCode = table.Column<string>(type: "text", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EmailVerifications", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Files",
                 schema: "roomates",
                 columns: table => new
@@ -23,7 +40,7 @@ namespace Roommates.Data.Migrations
                     Content = table.Column<byte[]>(type: "bytea", nullable: true),
                     MimeType = table.Column<string>(type: "text", nullable: true),
                     EntityState = table.Column<int>(type: "integer", nullable: false),
-                    AuthorRoommateId = table.Column<Guid>(type: "uuid", nullable: false),
+                    AuthorUserId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
@@ -51,7 +68,7 @@ namespace Roommates.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Roommates",
+                name: "Users",
                 schema: "roomates",
                 columns: table => new
                 {
@@ -61,6 +78,9 @@ namespace Roommates.Data.Migrations
                     Gender = table.Column<int>(type: "integer", nullable: true),
                     PhoneNumber = table.Column<string>(type: "text", nullable: true),
                     IsPhoneNumberVerified = table.Column<bool>(type: "boolean", nullable: false),
+                    Email = table.Column<string>(type: "text", nullable: false),
+                    IsEmailVerified = table.Column<bool>(type: "boolean", nullable: false),
+                    Password = table.Column<string>(type: "text", nullable: false),
                     Bio = table.Column<string>(type: "text", nullable: true),
                     EntityState = table.Column<int>(type: "integer", nullable: false),
                     ProfilePictureFileId = table.Column<Guid>(type: "uuid", nullable: true),
@@ -69,7 +89,7 @@ namespace Roommates.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Roommates", x => x.Id);
+                    table.PrimaryKey("PK_Users", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -86,10 +106,10 @@ namespace Roommates.Data.Migrations
                     RoomsCount = table.Column<short>(type: "smallint", nullable: false),
                     IsForSelling = table.Column<bool>(type: "boolean", nullable: false),
                     ViewedTime = table.Column<long>(type: "bigint", nullable: false),
-                    PreferedRoommateGender = table.Column<int>(type: "integer", nullable: false),
+                    PreferedUserGender = table.Column<int>(type: "integer", nullable: false),
                     PricePeriodType = table.Column<int>(type: "integer", nullable: true),
                     CurrencyType = table.Column<int>(type: "integer", nullable: false),
-                    CreatedByRoommateId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedByUserId = table.Column<Guid>(type: "uuid", nullable: false),
                     EntityState = table.Column<int>(type: "integer", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
@@ -105,10 +125,10 @@ namespace Roommates.Data.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Posts_Roommates_CreatedByRoommateId",
-                        column: x => x.CreatedByRoommateId,
+                        name: "FK_Posts_Users_CreatedByUserId",
+                        column: x => x.CreatedByUserId,
                         principalSchema: "roomates",
-                        principalTable: "Roommates",
+                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -137,28 +157,28 @@ namespace Roommates.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "PostRoommate",
+                name: "PostUser",
                 schema: "roomates",
                 columns: table => new
                 {
-                    LikedByRoommatesId = table.Column<Guid>(type: "uuid", nullable: false),
+                    LikedByUsersId = table.Column<Guid>(type: "uuid", nullable: false),
                     LikedPostsId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PostRoommate", x => new { x.LikedByRoommatesId, x.LikedPostsId });
+                    table.PrimaryKey("PK_PostUser", x => new { x.LikedByUsersId, x.LikedPostsId });
                     table.ForeignKey(
-                        name: "FK_PostRoommate_Posts_LikedPostsId",
+                        name: "FK_PostUser_Posts_LikedPostsId",
                         column: x => x.LikedPostsId,
                         principalSchema: "roomates",
                         principalTable: "Posts",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_PostRoommate_Roommates_LikedByRoommatesId",
-                        column: x => x.LikedByRoommatesId,
+                        name: "FK_PostUser_Users_LikedByUsersId",
+                        column: x => x.LikedByUsersId,
                         principalSchema: "roomates",
-                        principalTable: "Roommates",
+                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -170,26 +190,30 @@ namespace Roommates.Data.Migrations
                 column: "PostId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PostRoommate_LikedPostsId",
-                schema: "roomates",
-                table: "PostRoommate",
-                column: "LikedPostsId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Posts_CreatedByRoommateId",
+                name: "IX_Posts_CreatedByUserId",
                 schema: "roomates",
                 table: "Posts",
-                column: "CreatedByRoommateId");
+                column: "CreatedByUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Posts_LocationId",
                 schema: "roomates",
                 table: "Posts",
                 column: "LocationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PostUser_LikedPostsId",
+                schema: "roomates",
+                table: "PostUser",
+                column: "LikedPostsId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "EmailVerifications",
+                schema: "roomates");
+
             migrationBuilder.DropTable(
                 name: "Files",
                 schema: "roomates");
@@ -199,7 +223,7 @@ namespace Roommates.Data.Migrations
                 schema: "roomates");
 
             migrationBuilder.DropTable(
-                name: "PostRoommate",
+                name: "PostUser",
                 schema: "roomates");
 
             migrationBuilder.DropTable(
@@ -211,7 +235,7 @@ namespace Roommates.Data.Migrations
                 schema: "roomates");
 
             migrationBuilder.DropTable(
-                name: "Roommates",
+                name: "Users",
                 schema: "roomates");
         }
     }

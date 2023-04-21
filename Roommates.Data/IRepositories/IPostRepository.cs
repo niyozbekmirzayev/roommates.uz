@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Roommates.Data.IRepositories
 {
-    public interface IPostRepository : IBaseRepository<Post, RoommatesDbContext>
+    public interface IPostRepository : IBaseRepository<Post, ApplicationDbContext>
     {
     }
 }

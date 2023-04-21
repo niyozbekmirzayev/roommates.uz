@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Roommates.Data.IRepositories
 {
-    public interface IRoommateRepository : IBaseRepository<Roommate, RoommatesDbContext>
+    public interface IUserRepository : IBaseRepository<User, ApplicationDbContext>
     {
     }
 }

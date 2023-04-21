@@ -26,13 +26,13 @@ namespace Roommates.Domain.Models.Files
         public EntityState EntityState { get; set; } = EntityState.Active;
 
         [Required]
-        [ForeignKey(nameof(AuthorRoommate))]
-        public Guid AuthorRoommateId { get; set; }
+        [ForeignKey(nameof(AuthorUser))]
+        public Guid AuthorUserId { get; set; }
 
         #region ForeignKeys
 
         [NotMapped]
-        public Roommate AuthorRoommate { get; set; }
+        public User AuthorUser { get; set; }
 
         #endregion
     }

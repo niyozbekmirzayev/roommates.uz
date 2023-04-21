@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace Roommates.Data.Repositories
 {
-    public class LocationRepository : BaseRepository<Location, RoommatesDbContext>, ILocationRepository
+    public class LocationRepository : BaseRepository<Location, ApplicationDbContext>, ILocationRepository
     {
-        public LocationRepository(RoommatesDbContext dbContext) : base(dbContext)
+        public LocationRepository(ApplicationDbContext dbContext) : base(dbContext)
         {
         }
     }

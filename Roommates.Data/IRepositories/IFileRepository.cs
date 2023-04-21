@@ -8,7 +8,7 @@ using File = Roommates.Domain.Models.Files.File;
 
 namespace Roommates.Data.IRepositories
 {
-    public interface IFileRepository : IBaseRepository<File, RoommatesDbContext>
+    public interface IFileRepository : IBaseRepository<File, ApplicationDbContext>
     {
     }
 }

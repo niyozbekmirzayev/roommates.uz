@@ -42,7 +42,7 @@ namespace Roommates.Domain.Models.Posts
         public long ViewedTime { get; set; } = 0;
 
         [Required]
-        public Gender PreferedRoommateGender { get; set; } = Gender.NotSpecified;
+        public Gender PreferedUserGender { get; set; } = Gender.NotSpecified;
 
         public PricePeriodType? PricePeriodType { get; set; }
 
@@ -50,7 +50,7 @@ namespace Roommates.Domain.Models.Posts
         public CurrencyType CurrencyType { get; set; }
 
         [Required]
-        public Guid CreatedByRoommateId { get; set; }
+        public Guid CreatedByUserId { get; set; }
 
         [Required]
         public EntityState EntityState { get; set; } = EntityState.Active;
@@ -58,9 +58,9 @@ namespace Roommates.Domain.Models.Posts
         #region ForeignKeys
 
         [NotMapped]
-        public Roommate CreatedByRoommate { get; set; }
+        public User CreatedByUser { get; set; }
 
-        public List<Roommate>? LikedByRoommates { get; set; }
+        public List<User>? LikedByUsers { get; set; }
 
         public List<FilesPosts>? AppartmentViewFiles { get; set; }
 

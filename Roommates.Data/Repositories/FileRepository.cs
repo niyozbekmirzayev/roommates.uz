@@ -9,9 +9,9 @@ using File = Roommates.Domain.Models.Files.File;
 
 namespace Roommates.Data.Repositories
 {
-    public class FileRepository : BaseRepository<File, RoommatesDbContext>, IFileRepository
+    public class FileRepository : BaseRepository<File, ApplicationDbContext>, IFileRepository
     {
-        public FileRepository(RoommatesDbContext dbContext) : base(dbContext)
+        public FileRepository(ApplicationDbContext dbContext) : base(dbContext)
         {
         }
     }
