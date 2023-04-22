@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Roommates.API.Helpers;
 using Roommates.Data;
 using Roommates.Data.IRepositories;
 using Roommates.Data.Repositories;
@@ -22,6 +23,7 @@ namespace Roommates.API
             // Add services to the container.
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
+
             builder.Services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Roommates.API", Version = "v1" });
@@ -58,14 +60,13 @@ namespace Roommates.API
             builder.Services.AddScoped<IIdentiyService, IdentityService>();
             builder.Services.AddScoped<IEmailService, EmailService>();
 
+            builder.Services.AddTransient<Microsoft.Extensions.Logging.ILogger>(s => s.GetRequiredService<ILogger<Program>>());
             builder.Services.AddScoped<PrepDatabase>();
             builder.Services.AddAutoMapper(typeof(MappingConfig));
-
             builder.Services.AddDbContext<ApplicationDbContext>(o => o.UseNpgsql(builder.Configuration.GetConnectionString("Postgre")));
 
-
+            #region JWT Authentication
             var key = Encoding.UTF8.GetBytes(builder.Configuration.GetSection("JWT:Key").Value);
-
             builder.Services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -83,7 +84,9 @@ namespace Roommates.API
                 };
             });
 
+            #endregion
 
+            #region Serilog 
             var logger = new LoggerConfiguration()
                 .ReadFrom.Configuration(builder.Configuration)
                 .Enrich.FromLogContext()
@@ -91,15 +94,18 @@ namespace Roommates.API
 
             builder.Logging.ClearProviders();
             builder.Logging.AddSerilog(logger);
+            #endregion
 
             var app = builder.Build();
+
+            // Configure the HTTP request pipeline.
+            app.AddGlobalErrorHandler();
 
             using (var scope = app.Services.CreateScope())
             {
                 scope.ServiceProvider.GetRequiredService<PrepDatabase>();
             }
 
-            // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();

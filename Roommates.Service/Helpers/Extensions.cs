@@ -1,11 +1,11 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 
-namespace Roommates.Service.Extensions
+namespace Roommates.Service.Helpers
 {
     public static class Extensions
     {
-        public static string ToSHA256(this string text) 
+        public static string ToSHA256(this string text)
         {
             using (var sha256 = SHA256.Create())
             {

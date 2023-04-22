@@ -11,12 +11,10 @@ namespace Roommates.API.Controllers
     public class IdentityController : Controller
     {
         private readonly IIdentiyService identiyService;
-        private readonly WebFunctions webFunctions;
 
         public IdentityController(IIdentiyService identiyService)
         {
             this.identiyService = identiyService;
-            webFunctions = new WebFunctions();
         }
 
         [HttpPost]
@@ -24,7 +22,7 @@ namespace Roommates.API.Controllers
         public async Task<IActionResult> SignUp(CreateUserViewModel createUserView)
         {
             var result = await identiyService.CreateUserAsync(createUserView);
-            return webFunctions.SentResponseWithStatusCode(result);
+            return WebFunctions.SentResponseWithStatusCode(this, result);
         }
 
         [HttpPost]
@@ -32,7 +30,7 @@ namespace Roommates.API.Controllers
         public async Task<IActionResult> Login(CreateTokenViewModel createTokenView)
         {
             var result = await identiyService.CreateTokenAsync(createTokenView);
-            return webFunctions.SentResponseWithStatusCode(result);
+            return WebFunctions.SentResponseWithStatusCode(this, result);
         }
     }
 }

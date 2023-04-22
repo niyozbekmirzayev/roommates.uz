@@ -2,21 +2,21 @@
 
 namespace Roommates.API.Helpers
 {
-    public class WebFunctions : Controller 
+    public static class WebFunctions
     {
-        public IActionResult SentResponseWithStatusCode(dynamic source)
+        public static IActionResult SentResponseWithStatusCode(Controller controller, dynamic source)
         {
             if (source.Error != null)
             {
-                if (source.Error.Code == 404) return NotFound(source);
-                else if (source.Error.Code == 400) return BadRequest(source);
-                else if (source.Error.Code == 409) return Conflict(source);
-                else if (source.Error.Code == 401) return Unauthorized(source);
-              
-                else return StatusCode(500, source);
+                if (source.Error.Code == 404) return controller.NotFound(source);
+                else if (source.Error.Code == 400) return controller.BadRequest(source);
+                else if (source.Error.Code == 409) return controller.Conflict(source);
+                else if (source.Error.Code == 401) return controller.Unauthorized(source);
+
+                else return controller.StatusCode(500, source);
             }
 
-            return Ok(source);
+            return controller.Ok(source);
         }
     }
 }

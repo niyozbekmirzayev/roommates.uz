@@ -12,7 +12,7 @@ namespace Roommates.Service.Services
     {
         private readonly IConfiguration configuration;
 
-        public EmailService(IConfiguration configuration) 
+        public EmailService(IConfiguration configuration)
         {
             this.configuration = configuration;
         }
@@ -34,7 +34,7 @@ namespace Roommates.Service.Services
             await client.AuthenticateAsync(configuration.GetSection("EmailUsername").Value, configuration.GetSection("EmailPassword").Value);
             await client.SendAsync(message);
             await client.DisconnectAsync(true);
-            
+
         }
     }
 }
