@@ -24,6 +24,7 @@ namespace Roommates.API
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
 
+            #region Swagger
             builder.Services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Roommates.API", Version = "v1" });
@@ -51,6 +52,7 @@ namespace Roommates.API
                     }
                 });
             });
+            #endregion
 
             builder.Services.AddScoped<IUnitOfWorkRepository, UnitOfWorkRepository>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -87,19 +89,17 @@ namespace Roommates.API
             #endregion
 
             #region Serilog 
-            var logger = new LoggerConfiguration()
-                .ReadFrom.Configuration(builder.Configuration)
-                .Enrich.FromLogContext()
-                .CreateLogger();
+            builder.Host.UseSerilog((context, configuration) =>
+                configuration.ReadFrom.Configuration(context.Configuration));
 
-            builder.Logging.ClearProviders();
-            builder.Logging.AddSerilog(logger);
             #endregion
 
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
             app.AddGlobalErrorHandler();
+
+            app.UseSerilogRequestLogging();
 
             using (var scope = app.Services.CreateScope())
             {

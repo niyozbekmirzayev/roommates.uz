@@ -115,8 +115,7 @@ namespace Roommates.Service.Services
 
             if (await userRepository.SaveChangesAsync() > 0)
             {
-                response.Data = createdUser.Id;
-                response.ResponseCode = ResponseCodes.SUCCESS_ADD_DATA;
+                response.Data = createdUser.Id;                response.ResponseCode = ResponseCodes.SUCCESS_ADD_DATA;
 
                 return response;
             }

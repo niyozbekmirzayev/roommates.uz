@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Roommates.Domain", "Roommat
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Roommates.Data", "Roommates.Data\Roommates.Data.csproj", "{1E4C9E9E-48F3-4314-9953-4E1AA7DCA81F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Roommates.Service", "Roommates.Service\Roommates.Service.csproj", "{5B94E350-EDFB-406D-A414-E063AB98E1AE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Roommates.Service", "Roommates.Service\Roommates.Service.csproj", "{5B94E350-EDFB-406D-A414-E063AB98E1AE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Roommates.Global", "Roommates.Global\Roommates.Global.csproj", "{7E0B6FA8-9292-4B0E-A4C3-FD8FA26E0295}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{5B94E350-EDFB-406D-A414-E063AB98E1AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5B94E350-EDFB-406D-A414-E063AB98E1AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5B94E350-EDFB-406D-A414-E063AB98E1AE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E0B6FA8-9292-4B0E-A4C3-FD8FA26E0295}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E0B6FA8-9292-4B0E-A4C3-FD8FA26E0295}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E0B6FA8-9292-4B0E-A4C3-FD8FA26E0295}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E0B6FA8-9292-4B0E-A4C3-FD8FA26E0295}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

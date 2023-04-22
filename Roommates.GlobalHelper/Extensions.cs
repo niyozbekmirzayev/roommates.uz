@@ -1,8 +1,7 @@
-﻿using Roommates.API.Middlewares;
-
-namespace Roommates.API.Helpers
+﻿
+namespace Roommates.GlobalHelper
 {
-    public static class Extensions
+    public static class Extensions : APplic
     {
         public static IApplicationBuilder AddGlobalErrorHandler(this IApplicationBuilder applicationBuilder)
         {

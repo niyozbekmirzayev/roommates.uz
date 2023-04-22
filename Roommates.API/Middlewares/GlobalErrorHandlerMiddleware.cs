@@ -3,12 +3,12 @@ using Roommates.Service.Response;
 
 namespace Roommates.API.Middlewares
 {
-    public class GlobalErrorHandlingMiddleware
+    public class GlobalErrorHandlerMiddleware
     {
         private readonly RequestDelegate next;
         private readonly ILogger logger;
 
-        public GlobalErrorHandlingMiddleware(RequestDelegate next, ILogger logger)
+        public GlobalErrorHandlerMiddleware(RequestDelegate next, ILogger logger)
         {
             this.next = next;
             this.logger = logger;
