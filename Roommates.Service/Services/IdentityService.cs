@@ -1,9 +1,17 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using Roommates.Data.IRepositories;
 using Roommates.Domain.Models.Roommates;
+using Roommates.Service.Extensions;
+using Roommates.Service.Helpers;
 using Roommates.Service.Interfaces;
 using Roommates.Service.Response;
 using Roommates.Service.ViewModels;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace Roommates.Service.Services
 {
@@ -14,17 +22,70 @@ namespace Roommates.Service.Services
         private readonly IUserRepository userRepository;
         private readonly IEmailService emailService;
         private readonly IMapper mapper;
+        private readonly IConfiguration configuration;
 
-        public IdentityService(IUserRepository userRepository, IMapper mapper, IEmailService emailService)
+        public IdentityService(
+            IUserRepository userRepository, 
+            IMapper mapper,
+            IEmailService emailService,
+            IConfiguration configuration)
         {
             this.userRepository = userRepository;
             this.mapper = mapper;
             this.emailService = emailService;
+            this.configuration = configuration;
         }
 
-        public Task<string> CreateTokenAsync(CreateTokenViewModel createTokenView)
+        public async Task<BaseResponse> CreateTokenAsync(CreateTokenViewModel createTokenView)
         {
-            throw new NotImplementedException();
+            var response = new BaseResponse();
+            try 
+            {
+                var user = await userRepository.GetAll().FirstOrDefaultAsync(u => u.Email.ToLower() == createTokenView.Email.ToLower() &&
+                                                      u.Password == createTokenView.Password.ToSHA256());
+
+                if(user == null) 
+                {
+                    response.Error = new BaseError("invalid email or password", code: ErrorCodes.NotFoud);
+                    response.ResponseCode = ResponseCodes.ERROR_NOT_FOUND_DATA;
+
+                    return response;
+                }
+
+                // Need to validate for email confirmation
+                var claims = new List<Claim>() 
+                {
+                     new Claim("UserId", user.Id.ToString()),
+                     new Claim(ClaimTypes.Email, user.Email),
+                     new Claim("FirstName", user.FirstName),
+                     new Claim("LastName", user.LastName ?? string.Empty),
+                     new Claim(ClaimTypes.MobilePhone, user.PhoneNumber ??  string.Empty),
+                };
+
+                var issuer = configuration.GetSection("JWT:Issuer").Value;
+                var audience = configuration.GetSection("JWT:Audience").Value;
+                var key = configuration.GetSection("JWT:Key").Value;
+                var expireTime = configuration.GetSection("JWT:Expire").Value;
+
+                var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
+
+                var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
+                var tokenDescriptor = new JwtSecurityToken(issuer, audience, claims,
+                                                           expires: DateTime.Now.AddMinutes(double.Parse(expireTime)),
+                                                           signingCredentials: credentials);
+
+                string token = new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
+
+                response.Data = token;
+                response.ResponseCode = ResponseCodes.SUCCESS_GENERATE_TOKEN;
+
+                return response;
+            }
+            catch(Exception ex) 
+            {
+                return BaseHelperService.GetExceptionDetails(ex);
+            }
         }
 
         public async Task<BaseResponse> CreateUserAsync(CreateUserViewModel createUserView)
@@ -42,6 +103,7 @@ namespace Roommates.Service.Services
                 }
 
                 var user = mapper.Map<User>(createUserView);
+                user.Password = user.Password.ToSHA256();
 
                 // Email verification
                 /*var verificationEmailBody = CreateVerificationEmailBody(user.EmailVerificationCode);
@@ -71,10 +133,7 @@ namespace Roommates.Service.Services
             }
             catch (Exception ex)
             {
-                response.ResponseCode = ResponseCodes.UNEXPECTED_ERROR;
-                response.Error = new BaseError(ex.Message, ex);
-
-                return response;
+                return BaseHelperService.GetExceptionDetails(ex);
             }
         }
 

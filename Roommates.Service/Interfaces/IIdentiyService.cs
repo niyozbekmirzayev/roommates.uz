@@ -5,7 +5,7 @@ namespace Roommates.Service.Interfaces
 {
     public interface IIdentiyService
     {
-        Task<string> CreateTokenAsync(CreateTokenViewModel createTokenView);
+        Task<BaseResponse> CreateTokenAsync(CreateTokenViewModel createTokenView);
         Task<BaseResponse> CreateUserAsync(CreateUserViewModel createUserView);
         Task<bool> DeleteUserAsync(string password);
         Task<bool> UpdatePasswordAsync(UpdatePasswordViewModel updatePasswordView);

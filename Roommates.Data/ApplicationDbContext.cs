@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Roommates.Domain.Models.Emails;
 using Roommates.Domain.Models.Files;
 using Roommates.Domain.Models.Locations;
 using Roommates.Domain.Models.Posts;
 using Roommates.Domain.Models.Roommates;
+using Roommates.Domain.Models.Users;
 using File = Roommates.Domain.Models.Files.File;
 
 namespace Roommates.Data
