@@ -106,8 +106,6 @@ namespace Roommates.Service.Services
                     return response;
                 }
 
-                throw new Exception("Fuck happend");
-
                 var user = mapper.Map<User>(createUserView);
                 user.Password = user.Password.ToSHA256();
 
