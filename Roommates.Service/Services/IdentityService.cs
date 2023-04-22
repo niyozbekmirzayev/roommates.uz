@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Roommates.Data.IRepositories;
 using Roommates.Domain.Models.Roommates;
@@ -23,17 +24,20 @@ namespace Roommates.Service.Services
         private readonly IEmailService emailService;
         private readonly IMapper mapper;
         private readonly IConfiguration configuration;
+        private readonly ILogger<IdentityService> logger;
 
         public IdentityService(
             IUserRepository userRepository, 
             IMapper mapper,
             IEmailService emailService,
+            ILogger<IdentityService> logger,
             IConfiguration configuration)
         {
             this.userRepository = userRepository;
             this.mapper = mapper;
             this.emailService = emailService;
             this.configuration = configuration;
+            this.logger = logger; 
         }
 
         public async Task<BaseResponse> CreateTokenAsync(CreateTokenViewModel createTokenView)
@@ -84,7 +88,7 @@ namespace Roommates.Service.Services
             }
             catch(Exception ex) 
             {
-                return BaseHelperService.GetExceptionDetails(ex);
+                return BaseHelperService.GetExceptionDetails(ex, logger);
             }
         }
 
@@ -101,6 +105,8 @@ namespace Roommates.Service.Services
 
                     return response;
                 }
+
+                throw new Exception("Fuck happend");
 
                 var user = mapper.Map<User>(createUserView);
                 user.Password = user.Password.ToSHA256();
@@ -133,21 +139,21 @@ namespace Roommates.Service.Services
             }
             catch (Exception ex)
             {
-                return BaseHelperService.GetExceptionDetails(ex);
+                return BaseHelperService.GetExceptionDetails(ex, logger);
             }
         }
 
-        public Task<bool> DeleteUserAsync(string password)
+        public Task<BaseResponse> DeleteUserAsync(string password)
         {
             throw new NotImplementedException();
         }
 
-        public Task<bool> UpdatePasswordAsync(UpdatePasswordViewModel updatePasswordView)
+        public Task<BaseResponse> UpdatePasswordAsync(UpdatePasswordViewModel updatePasswordView)
         {
             throw new NotImplementedException();
         }
 
-        public Task<bool> VerifyEmail(VerifyEmailViewModel verifyEmailView)
+        public Task<BaseResponse> VerifyEmail(VerifyEmailViewModel verifyEmailView)
         {
             throw new NotImplementedException();
         }

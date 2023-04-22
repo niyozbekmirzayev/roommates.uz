@@ -8,6 +8,7 @@ using Roommates.Data.Repositories;
 using Roommates.Service.Interfaces;
 using Roommates.Service.Mapping;
 using Roommates.Service.Services;
+using Serilog;
 using System.Text;
 
 namespace Roommates.API
@@ -63,7 +64,7 @@ namespace Roommates.API
             builder.Services.AddDbContext<ApplicationDbContext>(o => o.UseNpgsql(builder.Configuration.GetConnectionString("Postgre")));
 
 
-            var key = Encoding.ASCII.GetBytes("your secret key goes here");
+            var key = Encoding.UTF8.GetBytes(builder.Configuration.GetSection("JWT:Key").Value);
 
             builder.Services.AddAuthentication(options =>
             {
@@ -81,6 +82,14 @@ namespace Roommates.API
                     ValidateAudience = false
                 };
             });
+
+
+            var logger = new LoggerConfiguration()
+            .ReadFrom.Configuration(builder.Configuration)
+            .Enrich.FromLogContext()
+            .CreateLogger();
+            builder.Logging.ClearProviders();
+            builder.Logging.AddSerilog(logger);
 
             var app = builder.Build();
 
