@@ -25,6 +25,7 @@ namespace Roommates.Test
         private Mock<IEmailService> moqEmailService;
         private Mock<ILogger<IdentityService>> moqLogger;
         private Mock<IConfiguration> moqConfiguration;
+        private Mock<IUserRepository> moqUserRepository;
 
         public IdentityServiceTest() 
         {
@@ -36,6 +37,7 @@ namespace Roommates.Test
             moqEmailService = new();
             moqConfiguration = new();
             moqLogger = new();
+            moqUserRepository = new();
         }
 
         private void ConfigureDatabase() 
@@ -47,19 +49,21 @@ namespace Roommates.Test
             userRepository = new UserRepository(applicationDbContext);
         }
 
-        private void ConfigureService() 
+        private void ConfigureService(IUserRepository userRepository) 
         {
             identityService = new IdentityService(userRepository, mapper, moqEmailService.Object, moqLogger.Object, moqConfiguration.Object);
         }
 
         #region TestCases
-        
+
+        #region CreateUserAsync
+
         [Fact]
-        public async Task CreateUserAsync_WhenDuplicateEmailIsGiven_ReturnsErrorDuplicateData() 
+        public async Task CreateUserAsync_WhenEmailDuplicateIsDuplicate_ReturnsErrorDuplicateData() 
         {
             // Arrange
             ConfigureDatabase();
-            ConfigureService();
+            ConfigureService(userRepository);
 
             var existUser = new User()
             {
@@ -84,6 +88,61 @@ namespace Roommates.Test
             // Assert
             Assert.Equal(ResponseCodes.ERROR_DUPLICATE_DATA, response.ResponseCode); 
         }
+
+        [Fact]
+        public async Task CreateUserAsync_WhenParametersAreValid_UserIsSaved_ReturnsSuccessAddData()
+        {
+            // Arrange
+            ConfigureDatabase();
+            ConfigureService(userRepository);
+
+            var view = new CreateUserViewModel()
+            {
+                FirstName = "John",
+                Email = "fake@gmail.com",
+                Password = "password",
+            };
+
+            // Act
+            var response = await identityService.CreateUserAsync(view);
+
+            // Assert
+            Assert.Equal(ResponseCodes.SUCCESS_ADD_DATA, response.ResponseCode);
+
+            var addedUser = userRepository.GetAsync(Guid.Parse(response.Data.ToString()));
+            Assert.NotNull(addedUser);
+        }
+
+        [Fact]
+        public async Task CreateUserAsync_NoChangesMadeInDatabase_ReturnsErrorSaveData()
+        {
+            // Arrange
+            moqUserRepository.Setup(l => l.SaveChangesAsync()).Returns(Task.FromResult(0));
+            moqUserRepository.Setup(l => l.GetAll(It.IsAny<bool>())).Returns(new List<User>().AsQueryable());
+
+            var moqAddedUser = new User()
+            {
+                Id = Guid.NewGuid(),
+            };
+            moqUserRepository.Setup(l => l.AddAsync(It.IsAny<User>())).Returns(Task.FromResult(moqAddedUser));
+
+            ConfigureService(moqUserRepository.Object);
+
+            var view = new CreateUserViewModel()
+            {
+                FirstName = "John",
+                Email = "fake@gmail.com",
+                Password = "password",
+            };
+
+            // Act
+            var response = await identityService.CreateUserAsync(view);
+
+            // Assert
+            Assert.Equal(ResponseCodes.ERROR_SAVE_DATA, response.ResponseCode);
+        }
+
+        #endregion
 
         #endregion
     }
