@@ -261,8 +261,8 @@ namespace Roommates.Service.Services
                 $"  <body>" +
                 $"    <h1>Email Confirmation</h1>" +
                 $"    <p>Dear {user.FirstName},</p>" +
-                $"    <p>Thank you for registering. Please click on the following link to confirm your email address:</p>" +
-                $"   <a href=\"{confirmationLink}\" target=\"_blank\" style=\"display:inline-block;padding:12px 24px;background-color:#3366cc;color:#ffffff;font-size:18px;text-decoration:none;border-radius:5px;\">Verify Account Removal</a>" +
+                $"    <p>Thank you for registering. Please click on the button to confirm your email address:</p>" +
+                $"   <a href=\"{confirmationLink}\" target=\"_blank\" style=\"display:inline-block;padding:12px 24px;background-color:#3366cc;color:#ffffff;font-size:18px;text-decoration:none;border-radius:5px;\">Confirm Email</a>" +
                 $"    <p>If you did not initiate this request, please ignore this email.</p>" +
                 $"    <p>Thank you for choosing our service!</p>" +
                 $"    <p>Best regards</p>" +
