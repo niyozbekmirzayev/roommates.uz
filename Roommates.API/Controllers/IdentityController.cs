@@ -32,5 +32,13 @@ namespace Roommates.API.Controllers
             var result = await identiyService.CreateTokenAsync(createTokenView);
             return WebFunctions.SentResponseWithStatusCode(this, result);
         }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> VerifyEmail(string verifactionCode)
+        {
+            var result = await identiyService.VerifyEmailAsync(verifactionCode);
+            return WebFunctions.SentResponseWithStatusCode(this, result);
+        }
     }
 }

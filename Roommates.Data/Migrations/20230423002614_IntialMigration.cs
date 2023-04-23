@@ -1,33 +1,16 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
-using System;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace Roommates.Data.Migrations
 {
-    public partial class InitialMigration : Migration
+    public partial class IntialMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.EnsureSchema(
                 name: "roomates");
-
-            migrationBuilder.CreateTable(
-                name: "EmailVerifications",
-                schema: "roomates",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Email = table.Column<string>(type: "text", nullable: false),
-                    VerificationCode = table.Column<string>(type: "text", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_EmailVerifications", x => x.Id);
-                });
 
             migrationBuilder.CreateTable(
                 name: "Files",
@@ -79,7 +62,7 @@ namespace Roommates.Data.Migrations
                     PhoneNumber = table.Column<string>(type: "text", nullable: true),
                     IsPhoneNumberVerified = table.Column<bool>(type: "boolean", nullable: false),
                     Email = table.Column<string>(type: "text", nullable: false),
-                    IsEmailVerified = table.Column<bool>(type: "boolean", nullable: false),
+                    EmailVerifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     Password = table.Column<string>(type: "text", nullable: false),
                     Bio = table.Column<string>(type: "text", nullable: true),
                     EntityState = table.Column<int>(type: "integer", nullable: false),
@@ -90,6 +73,31 @@ namespace Roommates.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EmailVerifications",
+                schema: "roomates",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    VerificationCode = table.Column<string>(type: "text", nullable: false),
+                    Type = table.Column<int>(type: "integer", nullable: false),
+                    VerifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EmailVerifications", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_EmailVerifications_Users_UserId",
+                        column: x => x.UserId,
+                        principalSchema: "roomates",
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -182,6 +190,12 @@ namespace Roommates.Data.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EmailVerifications_UserId",
+                schema: "roomates",
+                table: "EmailVerifications",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_FilesPosts_PostId",

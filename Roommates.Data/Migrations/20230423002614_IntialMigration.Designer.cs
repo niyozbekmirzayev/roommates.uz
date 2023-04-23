@@ -12,8 +12,8 @@ using Roommates.Data;
 namespace Roommates.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230421194317_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20230423002614_IntialMigration")]
+    partial class IntialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -38,34 +38,6 @@ namespace Roommates.Data.Migrations
                     b.HasIndex("LikedPostsId");
 
                     b.ToTable("PostUser", "roomates");
-                });
-
-            modelBuilder.Entity("Roommates.Domain.Models.Emails.EmailVerification", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("LastModifiedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("VerificationCode")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("EmailVerifications", "roomates");
                 });
 
             modelBuilder.Entity("Roommates.Domain.Models.Files.File", b =>
@@ -237,6 +209,9 @@ namespace Roommates.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<DateTime?>("EmailVerifiedDate")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<int>("EntityState")
                         .HasColumnType("integer");
 
@@ -246,9 +221,6 @@ namespace Roommates.Data.Migrations
 
                     b.Property<int?>("Gender")
                         .HasColumnType("integer");
-
-                    b.Property<bool>("IsEmailVerified")
-                        .HasColumnType("boolean");
 
                     b.Property<bool>("IsPhoneNumberVerified")
                         .HasColumnType("boolean");
@@ -272,6 +244,38 @@ namespace Roommates.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users", "roomates");
+                });
+
+            modelBuilder.Entity("Roommates.Domain.Models.Users.EmailVerification", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("LastModifiedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("VerificationCode")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("VerifiedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("EmailVerifications", "roomates");
                 });
 
             modelBuilder.Entity("PostUser", b =>
@@ -317,6 +321,17 @@ namespace Roommates.Data.Migrations
                     b.Navigation("Location");
                 });
 
+            modelBuilder.Entity("Roommates.Domain.Models.Users.EmailVerification", b =>
+                {
+                    b.HasOne("Roommates.Domain.Models.Roommates.User", "User")
+                        .WithMany("EmailVerifications")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Roommates.Domain.Models.Posts.Post", b =>
                 {
                     b.Navigation("AppartmentViewFiles");
@@ -324,6 +339,8 @@ namespace Roommates.Data.Migrations
 
             modelBuilder.Entity("Roommates.Domain.Models.Roommates.User", b =>
                 {
+                    b.Navigation("EmailVerifications");
+
                     b.Navigation("OwnPosts");
                 });
 #pragma warning restore 612, 618

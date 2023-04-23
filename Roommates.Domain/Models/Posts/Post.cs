@@ -60,9 +60,9 @@ namespace Roommates.Domain.Models.Posts
         [NotMapped]
         public User CreatedByUser { get; set; }
 
-        public List<User>? LikedByUsers { get; set; }
+        public List<User> LikedByUsers { get; set; }
 
-        public List<FilesPosts>? AppartmentViewFiles { get; set; }
+        public List<FilesPosts> AppartmentViewFiles { get; set; }
 
         #endregion
     }

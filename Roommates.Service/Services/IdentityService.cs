@@ -4,7 +4,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Roommates.Data.IRepositories;
+using Roommates.Domain.Enums;
 using Roommates.Domain.Models.Roommates;
+using Roommates.Domain.Models.Users;
 using Roommates.Service.Helpers;
 using Roommates.Service.Interfaces;
 using Roommates.Service.Response;
@@ -24,12 +26,14 @@ namespace Roommates.Service.Services
         private readonly IMapper mapper;
         private readonly IConfiguration configuration;
         private readonly ILogger<IdentityService> logger;
+        private readonly IUnitOfWorkRepository unitOfWorkRepository;
 
         public IdentityService(
             IUserRepository userRepository,
             IMapper mapper,
             IEmailService emailService,
             ILogger<IdentityService> logger,
+            IUnitOfWorkRepository unitOfWorkRepository,
             IConfiguration configuration)
         {
             this.userRepository = userRepository;
@@ -37,6 +41,7 @@ namespace Roommates.Service.Services
             this.emailService = emailService;
             this.configuration = configuration;
             this.logger = logger;
+            this.unitOfWorkRepository = unitOfWorkRepository;
         }
 
         public async Task<BaseResponse> CreateTokenAsync(CreateTokenViewModel createTokenView)
@@ -54,7 +59,14 @@ namespace Roommates.Service.Services
                 return response;
             }
 
-            // Need to validate for email confirmation
+            if(user.EmailVerifiedDate == null) 
+            {
+                response.Error = new BaseError("email is not verified", code: ErrorCodes.Unauthorized);
+                response.ResponseCode = ResponseCodes.ERROR_NOT_VERIFIED;
+
+                return response;
+            }
+            
             var claims = new List<Claim>()
             {
                     new Claim("UserId", user.Id.ToString()),
@@ -70,7 +82,6 @@ namespace Roommates.Service.Services
             var expireTime = configuration.GetSection("JWT:Expire").Value;
 
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
-
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
             var tokenDescriptor = new JwtSecurityToken(issuer, audience, claims,
@@ -100,18 +111,24 @@ namespace Roommates.Service.Services
             var user = mapper.Map<User>(createUserView);
             user.Password = user.Password.ToSHA256();
 
-            // Email verification
-            /*var verificationEmailBody = CreateVerificationEmailBody(user.EmailVerificationCode);
+            user.EmailVerifications = new List<EmailVerification>
+            {
+                new EmailVerification()
+                {
+                    Type = EmailVerificationType.EmailConfirmation,
+                }
+            };
+            var createdUser = await userRepository.AddAsync(user);
+
+            var verificationEmailBody = CreateEmailVerificationBody(user.EmailVerifications.FirstOrDefault(), user);
             var emailView = new EmailViewModel
             {
                 To = user.Email,
                 Subject = VERIFY_EMAIL_SUBJECT,
                 Body = verificationEmailBody,
             };
-                
-            await emailService.SendEmailAsync(emailView);*/
 
-            var createdUser = await userRepository.AddAsync(user);
+            await emailService.SendEmailAsync(emailView);
 
             if (await userRepository.SaveChangesAsync() > 0)
             {
@@ -137,14 +154,74 @@ namespace Roommates.Service.Services
             throw new NotImplementedException();
         }
 
-        public Task<BaseResponse> VerifyEmail(VerifyEmailViewModel verifyEmailView)
+        public async Task<BaseResponse> VerifyEmailAsync(string verificationCode)
         {
-            throw new NotImplementedException();
+            var response = new BaseResponse();
+            var emailVerification = await unitOfWorkRepository.EmailVerificationRepository.GetAll().Include(l => l.User)
+                                .FirstOrDefaultAsync(s => s.VerificationCode == verificationCode && 
+                                                          s.Type == EmailVerificationType.EmailConfirmation);
+
+            if(emailVerification == null) 
+            {
+                response.Error = new BaseError("verification code not found", code: ErrorCodes.NotFoud);
+                response.ResponseCode = ResponseCodes.ERROR_NOT_FOUND_DATA;
+
+                return response;
+            }
+
+            if (emailVerification.ExpirationDate < DateTime.UtcNow) 
+            {
+                response.Error = new BaseError("verifcatin code timed out", code: ErrorCodes.Gone);
+                response.ResponseCode = ResponseCodes.ERROR_TIMED_OUT_DATA;
+
+                return response;
+            }
+
+            if(emailVerification.User.EmailVerifiedDate != null && emailVerification.VerifiedDate != null) 
+            {
+                response.ResponseCode = ResponseCodes.SUCCESS_VERIFIED_DATA;
+
+                return response;
+            }
+
+            emailVerification.VerifiedDate = DateTime.UtcNow;
+            emailVerification.User.EmailVerifiedDate = emailVerification.VerifiedDate;
+            unitOfWorkRepository.EmailVerificationRepository.Update(emailVerification);
+
+            if (await userRepository.SaveChangesAsync() > 0)
+            {
+                response.ResponseCode = ResponseCodes.SUCCESS_VERIFIED_DATA;
+
+                return response;
+            }
+
+            response.Error = new BaseError("no changes made in the database");
+            response.ResponseCode = ResponseCodes.ERROR_SAVE_DATA;
+
+            return response;
         }
 
-        private string CreateVerificationEmailBody(string verificationCode)
+        private string CreateEmailVerificationBody(EmailVerification emailVerification, User user)
         {
-            return string.Empty;
+            string confirmationLink = $"https://localhost:7078/api/Identity/VerifyEmail?verifactionCode={emailVerification.VerificationCode}";
+
+            var htmlEmailBody = $"<!DOCTYPE html>" +
+                $"<html>" +
+                $" <head>" +
+                $"    <title>Email Confirmation</title>" +
+                $"  </head>" +
+                $"  <body>" +
+                $"    <h1>Email Confirmation</h1>" +
+                $"    <p>Dear {user.FirstName},</p>" +
+                $"    <p>Thank you for registering. Please click on the following link to confirm your email address:</p>" +
+                $"    <p><a href=\"{confirmationLink}\"> Confimation link </a></ p >" +
+                $"    <p>If you did not initiate this request, please ignore this email.</p>" +
+                $"    <p>Thank you for choosing our service!</p>" +
+                $"    <p>Best regards</p>" +
+                $"  </body>" +
+                $"</html>";
+
+            return htmlEmailBody;
         }
     }
 }

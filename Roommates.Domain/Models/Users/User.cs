@@ -8,6 +8,7 @@ using Roommates.Domain.Models;
 using Roommates.Domain.Models.Files;
 using Roommates.Domain.Models.Posts;
 using Roommates.Domain.Models.Roommates;
+using Roommates.Domain.Models.Users;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using File = Roommates.Domain.Models.Files.File;
@@ -31,8 +32,7 @@ namespace Roommates.Domain.Models.Roommates
         [Required]
         public string Email { get; set; }
 
-        [Required]
-        public bool IsEmailVerified { get; set; } = false;
+        public DateTime? EmailVerifiedDate { get; set; }
 
         [Required] // Now required, but later will not be.....
         public string Password { get; set; }
@@ -47,9 +47,11 @@ namespace Roommates.Domain.Models.Roommates
         [ForeignKey(nameof(ProfilePicture))]
         public Guid? ProfilePictureFileId { get; set; }
 
-        public List<Post>? LikedPosts { get; set; }
+        public List<Post> LikedPosts { get; set; }
 
-        public List<Post>? OwnPosts { get; set; }
+        public List<Post> OwnPosts { get; set; } 
+
+        public List<EmailVerification> EmailVerifications { get; set; }
 
         [NotMapped]
         public File? ProfilePicture { get; set; }

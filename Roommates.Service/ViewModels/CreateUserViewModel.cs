@@ -17,6 +17,9 @@ namespace Roommates.Service.ViewModels
         //[MinLength(8, ErrorMessage = "Password must be at least 8 characters long")]
         public string Password { get; set; }
 
+        [Compare(nameof(Password), ErrorMessage = "Password does not match")]
+        public string ConfirmPassword { get; set; }
+
         public Gender? Gender { get; set; }
 
         public string Bio { get; set; }

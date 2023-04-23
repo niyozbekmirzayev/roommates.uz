@@ -19,22 +19,33 @@ namespace Roommates.Service.Services
 
         public async Task SendEmailAsync(EmailViewModel viewModel)
         {
+            string emailHost = configuration.GetSection("EmailInfo:EmailHost").Value;
+            int emailPort = int.Parse(configuration.GetSection("EmailInfo:EmailPort").Value);
+            string emailUsername = configuration.GetSection("EmailInfo:EmailUsername").Value;
+            string emailPassword = configuration.GetSection("EmailInfo:EmailPassword").Value;
+
             var message = new MimeMessage();
-            message.From.Add(MailboxAddress.Parse(""));
+            message.From.Add(MailboxAddress.Parse(emailUsername));
             message.To.Add(MailboxAddress.Parse(viewModel.To));
             message.Subject = viewModel.Subject;
-
-            message.Body = new TextPart(TextFormat.Html)
+            message.Body = new TextPart(TextFormat.Html) 
             {
-                Text = viewModel.Body
+                Text = viewModel.Body 
             };
 
             using var client = new SmtpClient();
-            await client.ConnectAsync(configuration.GetSection("EmailHost").Value, int.Parse(configuration.GetSection("EmailPort").Value), SecureSocketOptions.StartTls);
-            await client.AuthenticateAsync(configuration.GetSection("EmailUsername").Value, configuration.GetSection("EmailPassword").Value);
-            await client.SendAsync(message);
-            await client.DisconnectAsync(true);
-
+            try 
+            {
+                await client.ConnectAsync(emailHost, emailPort, SecureSocketOptions.StartTls);
+                await client.AuthenticateAsync(emailUsername, emailPassword);
+                await client.SendAsync(message);
+                await client.DisconnectAsync(true);
+            }
+            catch 
+            {
+                await client.DisconnectAsync(true);
+                throw;
+            }
         }
     }
 }

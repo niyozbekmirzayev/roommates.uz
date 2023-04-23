@@ -26,6 +26,7 @@ namespace Roommates.Test
         private Mock<ILogger<IdentityService>> moqLogger;
         private Mock<IConfiguration> moqConfiguration;
         private Mock<IUserRepository> moqUserRepository;
+        private Mock<IUnitOfWorkRepository> moqUnitOfWorkRepository;
 
         public IdentityServiceTest() 
         {
@@ -38,6 +39,7 @@ namespace Roommates.Test
             moqConfiguration = new();
             moqLogger = new();
             moqUserRepository = new();
+            moqUnitOfWorkRepository = new();
         }
 
         private void ConfigureDatabase() 
@@ -51,7 +53,7 @@ namespace Roommates.Test
 
         private void ConfigureService(IUserRepository userRepository) 
         {
-            identityService = new IdentityService(userRepository, mapper, moqEmailService.Object, moqLogger.Object, moqConfiguration.Object);
+            identityService = new IdentityService(userRepository, mapper, moqEmailService.Object, moqLogger.Object, moqUnitOfWorkRepository.Object, moqConfiguration.Object);
         }
 
         #region TestCases

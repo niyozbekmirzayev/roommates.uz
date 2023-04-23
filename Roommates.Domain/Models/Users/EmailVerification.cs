@@ -2,6 +2,7 @@
 using Roommates;
 using Roommates.Domain;
 using Roommates.Domain.Base;
+using Roommates.Domain.Enums;
 using Roommates.Domain.Models;
 using Roommates.Domain.Models.Roommates;
 using Roommates.Domain.Models.Users;
@@ -22,13 +23,15 @@ namespace Roommates.Domain.Models.Users
         public Guid UserId { get; set; }
 
         [Required]
-        public string Email { get; set; }
-
-        [Required]
         public string VerificationCode { get; set; } = Guid.NewGuid().ToString() + Guid.NewGuid().ToString();
 
         [Required]
         public DateTime ExpirationDate = DateTime.UtcNow.AddHours(1);
+
+        [Required]
+        public EmailVerificationType Type { get; set; }
+
+        public DateTime? VerifiedDate { get; set; }
 
         [NotMapped]
         public User User { get; set; }

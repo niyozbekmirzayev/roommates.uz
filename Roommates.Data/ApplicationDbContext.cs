@@ -27,6 +27,10 @@ namespace Roommates.Data
             modelBuilder.Entity<User>()
                 .HasMany(e => e.OwnPosts)
                 .WithOne(e => e.CreatedByUser);
+
+            modelBuilder.Entity<User>()
+                .HasMany(e => e.EmailVerifications)
+                .WithOne(e => e.User);
         }
 
         public DbSet<User> Users { get; set; }
