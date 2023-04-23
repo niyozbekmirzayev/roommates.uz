@@ -12,5 +12,6 @@
         public const string ERROR_NOT_FOUND_DATA = "error-not-found-data";
         public const string ERROR_TIMED_OUT_DATA = "error-timed-out-data";
         public const string ERROR_NOT_VERIFIED = "error-not-verifed";
+        public const string ERROR_INVALID_DATA = "error-invalid-data";
     }
 }

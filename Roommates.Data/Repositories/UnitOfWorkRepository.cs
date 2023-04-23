@@ -12,14 +12,14 @@ namespace Roommates.Data.Repositories
         public UnitOfWorkRepository(
             IFileRepository fileRepository,
             IPostRepository postRepository,
-            IUserRepository roommateRepository,
+            IUserRepository userRepository,
             IEmailVerificationRepository emailVerificationRepository,
             ILocationRepository locationRepository)
         {
             FileRepository = fileRepository;
             PostRepository = postRepository;
             LocationRepository = locationRepository;
-            RoommateRepository = roommateRepository;
+            UserRepository = userRepository;
             EmailVerificationRepository = emailVerificationRepository;
 
         }
@@ -27,7 +27,7 @@ namespace Roommates.Data.Repositories
         public IFileRepository FileRepository { get; }
         public ILocationRepository LocationRepository { get; }
         public IPostRepository PostRepository { get; }
-        public IUserRepository RoommateRepository { get; }
+        public IUserRepository UserRepository { get; }
         public IEmailVerificationRepository EmailVerificationRepository { get; }
     }
 }

@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Roommates.Data.IRepositories;
+using Roommates.Data.Repositories;
 using Roommates.Domain.Enums;
 using Roommates.Domain.Models.Roommates;
 using Roommates.Domain.Models.Users;
@@ -148,9 +149,51 @@ namespace Roommates.Service.Services
             return response;
         }
 
-        public Task<BaseResponse> DeleteUserAsync(string password)
+        public async Task<BaseResponse> DeleteUserAsync(string password)
         {
-            throw new NotImplementedException();
+
+            var response = new BaseResponse();
+
+            Guid currentUserId = WebHelper.GetUserId(httpContextAccessor.HttpContext);
+
+            var currentUser = await unitOfWorkRepository.UserRepository.GetAsync(currentUserId);
+            if (currentUser == null)
+            {
+                response.ResponseCode = ResponseCodes.ERROR_NOT_FOUND_DATA;
+                response.Error = new BaseError("current user nof found", ErrorCodes.NotFoud);
+
+                return response;
+            }
+
+            password = password.ToSHA256();
+            if (!currentUser.Password.Equals(password))
+            {
+                response.ResponseCode = ResponseCodes.ERROR_INVALID_DATA;
+                response.Error = new BaseError("invalid password", ErrorCodes.BadRequest);
+
+                return response;
+            }
+
+            var userRemovalVerifaction = new EmailVerification()
+            {
+                Type = EmailVerificationType.UserRemoval,
+                UserId = currentUserId,
+            };
+
+            var createdVerification = await unitOfWorkRepository.EmailVerificationRepository.AddAsync(userRemovalVerifaction);
+
+            if (await unitOfWorkRepository.EmailVerificationRepository.SaveChangesAsync() > 0)
+            {
+                response.ResponseCode = ResponseCodes.SUCCESS_ADD_DATA;
+                response.Data = createdVerification.Id;
+
+                return response;
+            }
+
+            response.Error = new BaseError("no changes made in the database");
+            response.ResponseCode = ResponseCodes.ERROR_SAVE_DATA;
+
+            return response;
         }
 
         public Task<BaseResponse> UpdatePasswordAsync(UpdatePasswordViewModel updatePasswordView)
@@ -220,6 +263,30 @@ namespace Roommates.Service.Services
                 $"    <p>Thank you for registering. Please click on the following link to confirm your email address:</p>" +
                 $"    <p><a href=\"{confirmationLink}\"> Confimation link </a></ p >" +
                 $"    <p>If you did not initiate this request, please ignore this email.</p>" +
+                $"    <p>Thank you for choosing our service!</p>" +
+                $"    <p>Best regards</p>" +
+                $"  </body>" +
+                $"</html>";
+
+            return htmlEmailBody;
+        }
+
+        public string CreateUserRemovalBody(EmailVerification emailVerification, User user)
+        {
+            string confirmationLink = $"https://localhost:7078/api/Identity/VerifyEmail?verifactionCode={emailVerification.VerificationCode}";
+
+            var htmlEmailBody = "<!DOCTYPE html>" +
+                $"<html>" +
+                $"  <head>" +
+                $"    <meta charset=\"UTF-8\">" +
+                $"    <title>Account Removal Verification</title>" +
+                $"  </head>" +
+                $"  <body>" +
+                $"    <h1>Account Removal Verification</h1>" +
+                $"    <p>Hello,</p>" +
+                $"    <p>We have received a request to remove your account. To confirm that you wish to proceed with this request, please click the button below.</p>" +
+                $"    <p><strong>Note:</strong> If you did not request to remove your account, please ignore this email and contact us immediately at support@example.com.</p>" +
+                $"    <a href=\"{confirmationLink}\" target=\"_blank\" style=\"display:inline-block;padding:12px 24px;background-color:#3366cc;color:#ffffff;font-size:18px;text-decoration:none;border-radius:5px;\">Verify Account Removal</a>" +
                 $"    <p>Thank you for choosing our service!</p>" +
                 $"    <p>Best regards</p>" +
                 $"  </body>" +

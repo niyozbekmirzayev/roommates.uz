@@ -5,6 +5,6 @@ namespace Roommates.Domain.Enums
     {
         EmailConfirmation,
         PasswordRecovery,
-        AccountRemoval
+        UserRemoval
     }
 }
