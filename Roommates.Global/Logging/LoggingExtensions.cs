@@ -5,7 +5,7 @@ namespace Roommates.Global.Logging
 {
     public static class LoggingExtensions
     {
-        public static void LogUserAction(this ILogger logger, string key,string message, Dictionary<string, object> properties, LogEventLevel logLevel = LogEventLevel.Information)
+        public static void LogUserAction(this ILogger logger, string key, string message, Dictionary<string, object> properties, LogEventLevel logLevel = LogEventLevel.Information)
         {
             var enrichedProperties = new Dictionary<string, object>();
             enrichedProperties.Add("LogKey", key);

@@ -49,7 +49,7 @@ namespace Roommates.Domain.Models.Roommates
 
         public List<Post> LikedPosts { get; set; }
 
-        public List<Post> OwnPosts { get; set; } 
+        public List<Post> OwnPosts { get; set; }
 
         public List<EmailVerification> EmailVerifications { get; set; }
 

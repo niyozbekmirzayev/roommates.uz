@@ -1,9 +1,9 @@
-﻿using Microsoft.Extensions.Logging;
-using Roommates.Service.Response;
+﻿using Roommates.Global.Response;
+using Serilog;
 
-namespace Roommates.Service.Helpers
+namespace Roommates.Global.Helpers
 {
-    public static class BaseHelperService
+    public static class ServiceHelper
     {
         public static BaseResponse GetExceptionDetails(Exception ex, ILogger logger)
         {
@@ -13,19 +13,19 @@ namespace Roommates.Service.Helpers
 
             if (!string.IsNullOrEmpty(ex.Message))
             {
-                logger.LogError(ex.Message, ex);
+                logger.Error(ex.Message, ex);
 
                 response.Error = new BaseError(ex.Message);
             }
             else if (ex.InnerException != null)
             {
-                logger.LogError(ex.InnerException.Message, ex.InnerException);
+                logger.Error(ex.InnerException.Message, ex.InnerException);
 
                 response.Error = new BaseError(ex.InnerException.Message);
             }
             else
             {
-                logger.LogError("Unexpected exception was thrown", ex);
+                logger.Error("Unexpected exception was thrown", ex);
 
                 return response;
             }

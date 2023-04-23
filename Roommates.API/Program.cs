@@ -63,6 +63,7 @@ namespace Roommates.API
             builder.Services.AddScoped<IIdentiyService, IdentityService>();
             builder.Services.AddScoped<IEmailService, EmailService>();
 
+            builder.Services.AddHttpContextAccessor();
             builder.Services.AddTransient<Microsoft.Extensions.Logging.ILogger>(s => s.GetRequiredService<ILogger<Program>>());
             builder.Services.AddScoped<PrepDatabase>();
             builder.Services.AddAutoMapper(typeof(MappingConfig));

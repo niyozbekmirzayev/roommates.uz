@@ -1,4 +1,4 @@
-﻿using Roommates.Service.Response;
+﻿using Roommates.Global.Response;
 using Roommates.Service.ViewModels;
 
 namespace Roommates.Service.Interfaces

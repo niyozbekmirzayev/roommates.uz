@@ -1,7 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 
-namespace Roommates.Service.Helpers
+namespace Roommates.Global.Helpers
 {
     public static class Extensions
     {

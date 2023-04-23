@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -7,9 +8,9 @@ using Roommates.Data.IRepositories;
 using Roommates.Domain.Enums;
 using Roommates.Domain.Models.Roommates;
 using Roommates.Domain.Models.Users;
-using Roommates.Service.Helpers;
+using Roommates.Global.Helpers;
+using Roommates.Global.Response;
 using Roommates.Service.Interfaces;
-using Roommates.Service.Response;
 using Roommates.Service.ViewModels;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -27,6 +28,7 @@ namespace Roommates.Service.Services
         private readonly IConfiguration configuration;
         private readonly ILogger<IdentityService> logger;
         private readonly IUnitOfWorkRepository unitOfWorkRepository;
+        private readonly IHttpContextAccessor httpContextAccessor;
 
         public IdentityService(
             IUserRepository userRepository,
@@ -34,6 +36,7 @@ namespace Roommates.Service.Services
             IEmailService emailService,
             ILogger<IdentityService> logger,
             IUnitOfWorkRepository unitOfWorkRepository,
+            IHttpContextAccessor httpContextAccessor,
             IConfiguration configuration)
         {
             this.userRepository = userRepository;
@@ -42,6 +45,7 @@ namespace Roommates.Service.Services
             this.configuration = configuration;
             this.logger = logger;
             this.unitOfWorkRepository = unitOfWorkRepository;
+            this.httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<BaseResponse> CreateTokenAsync(CreateTokenViewModel createTokenView)
@@ -59,14 +63,14 @@ namespace Roommates.Service.Services
                 return response;
             }
 
-            if(user.EmailVerifiedDate == null) 
+            if (user.EmailVerifiedDate == null)
             {
                 response.Error = new BaseError("email is not verified", code: ErrorCodes.Unauthorized);
                 response.ResponseCode = ResponseCodes.ERROR_NOT_VERIFIED;
 
                 return response;
             }
-            
+
             var claims = new List<Claim>()
             {
                     new Claim("UserId", user.Id.ToString()),
@@ -132,7 +136,7 @@ namespace Roommates.Service.Services
 
             if (await userRepository.SaveChangesAsync() > 0)
             {
-                response.Data = createdUser.Id;               
+                response.Data = createdUser.Id;
                 response.ResponseCode = ResponseCodes.SUCCESS_ADD_DATA;
 
                 return response;
@@ -158,10 +162,10 @@ namespace Roommates.Service.Services
         {
             var response = new BaseResponse();
             var emailVerification = await unitOfWorkRepository.EmailVerificationRepository.GetAll().Include(l => l.User)
-                                .FirstOrDefaultAsync(s => s.VerificationCode == verificationCode && 
+                                .FirstOrDefaultAsync(s => s.VerificationCode == verificationCode &&
                                                           s.Type == EmailVerificationType.EmailConfirmation);
 
-            if(emailVerification == null) 
+            if (emailVerification == null)
             {
                 response.Error = new BaseError("verification code not found", code: ErrorCodes.NotFoud);
                 response.ResponseCode = ResponseCodes.ERROR_NOT_FOUND_DATA;
@@ -169,7 +173,7 @@ namespace Roommates.Service.Services
                 return response;
             }
 
-            if (emailVerification.ExpirationDate < DateTime.UtcNow) 
+            if (emailVerification.ExpirationDate < DateTime.UtcNow)
             {
                 response.Error = new BaseError("verifcatin code timed out", code: ErrorCodes.Gone);
                 response.ResponseCode = ResponseCodes.ERROR_TIMED_OUT_DATA;
@@ -177,7 +181,7 @@ namespace Roommates.Service.Services
                 return response;
             }
 
-            if(emailVerification.User.EmailVerifiedDate != null && emailVerification.VerifiedDate != null) 
+            if (emailVerification.User.EmailVerifiedDate != null && emailVerification.VerifiedDate != null)
             {
                 response.ResponseCode = ResponseCodes.SUCCESS_VERIFIED_DATA;
 

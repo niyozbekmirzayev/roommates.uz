@@ -1,4 +1,4 @@
-﻿namespace Roommates.Service.Response
+﻿namespace Roommates.Global.Response
 {
     public class BaseError
     {

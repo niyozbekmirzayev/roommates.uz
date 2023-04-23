@@ -1,5 +1,5 @@
 ﻿
-namespace Roommates.Service.Response
+namespace Roommates.Global.Response
 {
     public static class ErrorCodes
     {

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -7,9 +8,9 @@ using Roommates.Data;
 using Roommates.Data.IRepositories;
 using Roommates.Data.Repositories;
 using Roommates.Domain.Models.Roommates;
+using Roommates.Global.Response;
 using Roommates.Service.Interfaces;
 using Roommates.Service.Mapping;
-using Roommates.Service.Response;
 using Roommates.Service.Services;
 using Roommates.Service.ViewModels;
 using Xunit;
@@ -27,8 +28,9 @@ namespace Roommates.Test
         private Mock<IConfiguration> moqConfiguration;
         private Mock<IUserRepository> moqUserRepository;
         private Mock<IUnitOfWorkRepository> moqUnitOfWorkRepository;
+        private Mock<IHttpContextAccessor> moqHttpContextAccessor;
 
-        public IdentityServiceTest() 
+        public IdentityServiceTest()
         {
             mapper = new MapperConfiguration(mc =>
             {
@@ -40,9 +42,10 @@ namespace Roommates.Test
             moqLogger = new();
             moqUserRepository = new();
             moqUnitOfWorkRepository = new();
+            moqHttpContextAccessor = new();
         }
 
-        private void ConfigureDatabase() 
+        private void ConfigureDatabase()
         {
             var dbOptions = new DbContextOptionsBuilder<ApplicationDbContext>()
                 .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString()).Options;
@@ -51,9 +54,9 @@ namespace Roommates.Test
             userRepository = new UserRepository(applicationDbContext);
         }
 
-        private void ConfigureService(IUserRepository userRepository) 
+        private void ConfigureService(IUserRepository userRepository)
         {
-            identityService = new IdentityService(userRepository, mapper, moqEmailService.Object, moqLogger.Object, moqUnitOfWorkRepository.Object, moqConfiguration.Object);
+            identityService = new IdentityService(userRepository, mapper, moqEmailService.Object, moqLogger.Object, moqUnitOfWorkRepository.Object, moqHttpContextAccessor.Object, moqConfiguration.Object);
         }
 
         #region TestCases
@@ -61,7 +64,7 @@ namespace Roommates.Test
         #region CreateUserAsync
 
         [Fact]
-        public async Task CreateUserAsync_WhenEmailDuplicateIsDuplicate_ReturnsErrorDuplicateData() 
+        public async Task CreateUserAsync_WhenEmailDuplicateIsDuplicate_ReturnsErrorDuplicateData()
         {
             // Arrange
             ConfigureDatabase();
@@ -69,9 +72,9 @@ namespace Roommates.Test
 
             var existUser = new User()
             {
-                 FirstName = "Wick",
-                 Email = "fake@gmail.com",
-                 Password = "password"
+                FirstName = "Wick",
+                Email = "fake@gmail.com",
+                Password = "password"
             };
 
             await userRepository.AddAsync(existUser);
@@ -88,7 +91,7 @@ namespace Roommates.Test
             var response = await identityService.CreateUserAsync(view);
 
             // Assert
-            Assert.Equal(ResponseCodes.ERROR_DUPLICATE_DATA, response.ResponseCode); 
+            Assert.Equal(ResponseCodes.ERROR_DUPLICATE_DATA, response.ResponseCode);
         }
 
         [Fact]

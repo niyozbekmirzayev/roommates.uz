@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json;
-using Roommates.Service.Response;
+using Roommates.Global.Response;
 
 namespace Roommates.API.Middlewares
 {
