@@ -250,7 +250,8 @@ namespace Roommates.Service.Services
 
         private string CreateEmailVerificationBody(EmailVerification emailVerification, User user)
         {
-            string confirmationLink = $"https://localhost:7078/api/Identity/VerifyEmail?verifactionCode={emailVerification.VerificationCode}";
+            string localIpAddress = httpContextAccessor.HttpContext.Request.Host.Value.ToString();
+            string confirmationLink = $"https://{localIpAddress}/api/Identity/VerifyEmail?verifactionCode={emailVerification.VerificationCode}";
 
             var htmlEmailBody = $"<!DOCTYPE html>" +
                 $"<html>" +
@@ -261,7 +262,7 @@ namespace Roommates.Service.Services
                 $"    <h1>Email Confirmation</h1>" +
                 $"    <p>Dear {user.FirstName},</p>" +
                 $"    <p>Thank you for registering. Please click on the following link to confirm your email address:</p>" +
-                $"    <p><a href=\"{confirmationLink}\"> Confimation link </a></ p >" +
+                $"   <a href=\"{confirmationLink}\" target=\"_blank\" style=\"display:inline-block;padding:12px 24px;background-color:#3366cc;color:#ffffff;font-size:18px;text-decoration:none;border-radius:5px;\">Verify Account Removal</a>" +
                 $"    <p>If you did not initiate this request, please ignore this email.</p>" +
                 $"    <p>Thank you for choosing our service!</p>" +
                 $"    <p>Best regards</p>" +
@@ -273,7 +274,8 @@ namespace Roommates.Service.Services
 
         public string CreateUserRemovalBody(EmailVerification emailVerification, User user)
         {
-            string confirmationLink = $"https://localhost:7078/api/Identity/VerifyEmail?verifactionCode={emailVerification.VerificationCode}";
+            string localIpAddress = httpContextAccessor.HttpContext.Request.Host.Value.ToString();
+            string confirmationLink = $"https://{localIpAddress}:7078/api/Identity/VerifyEmail?verifactionCode={emailVerification.VerificationCode}";
 
             var htmlEmailBody = "<!DOCTYPE html>" +
                 $"<html>" +
@@ -283,9 +285,9 @@ namespace Roommates.Service.Services
                 $"  </head>" +
                 $"  <body>" +
                 $"    <h1>Account Removal Verification</h1>" +
-                $"    <p>Hello,</p>" +
+                $"   <p>Dear {user.FirstName},</p>" +
                 $"    <p>We have received a request to remove your account. To confirm that you wish to proceed with this request, please click the button below.</p>" +
-                $"    <p><strong>Note:</strong> If you did not request to remove your account, please ignore this email and contact us immediately at support@example.com.</p>" +
+                $"    <p><strong>Note:</strong> If you did not request to remove your account, please ignore this email</p>" +
                 $"    <a href=\"{confirmationLink}\" target=\"_blank\" style=\"display:inline-block;padding:12px 24px;background-color:#3366cc;color:#ffffff;font-size:18px;text-decoration:none;border-radius:5px;\">Verify Account Removal</a>" +
                 $"    <p>Thank you for choosing our service!</p>" +
                 $"    <p>Best regards</p>" +
