@@ -4,6 +4,7 @@
     {
         public const string SUCCESS_VERIFIED_DATA = "success-verified-data";
         public const string SUCCESS_ADD_DATA = "success-add-data";
+        public const string SUCCESS_DELETE_DATA = "success-delete-data";
         public const string SUCCESS_GENERATE_TOKEN = "success-generate-token";
 
         public const string UNEXPECTED_ERROR_EXCEPTION = "unexpected-error-exception";

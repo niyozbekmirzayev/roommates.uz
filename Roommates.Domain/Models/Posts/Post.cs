@@ -55,6 +55,8 @@ namespace Roommates.Domain.Models.Posts
         [Required]
         public EntityState EntityState { get; set; } = EntityState.Active;
 
+        public DateTime? InactivatedDate { get; set; }
+
         #region ForeignKeys
 
         [NotMapped]

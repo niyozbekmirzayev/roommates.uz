@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Roommates.Domain.Models.Locations
 {
-    public class Location : BaseModel, IPersistentEntity
+    public class Location : BaseModel
     {
         [Required]
         public string Name { get; set; }
@@ -21,8 +21,5 @@ namespace Roommates.Domain.Models.Locations
 
         [Required]
         public double Longitude { get; set; }
-
-        [Required]
-        public EntityState EntityState { get; set; } = EntityState.Active;
     }
 }

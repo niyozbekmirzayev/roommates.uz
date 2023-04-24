@@ -3,7 +3,7 @@ using Serilog;
 
 namespace Roommates.Global.Helpers
 {
-    public static class ServiceHelper
+    public static class ServiceFunctions
     {
         public static BaseResponse GetExceptionDetails(Exception ex, ILogger logger)
         {

@@ -1,11 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
-using System;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace Roommates.Data.Migrations
 {
-    public partial class IntialMigration : Migration
+    public partial class InitialMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -23,6 +23,7 @@ namespace Roommates.Data.Migrations
                     Content = table.Column<byte[]>(type: "bytea", nullable: true),
                     MimeType = table.Column<string>(type: "text", nullable: true),
                     EntityState = table.Column<int>(type: "integer", nullable: false),
+                    InactivatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     AuthorUserId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
@@ -41,7 +42,6 @@ namespace Roommates.Data.Migrations
                     Name = table.Column<string>(type: "text", nullable: false),
                     Latitude = table.Column<double>(type: "double precision", nullable: false),
                     Longitude = table.Column<double>(type: "double precision", nullable: false),
-                    EntityState = table.Column<int>(type: "integer", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
@@ -59,14 +59,16 @@ namespace Roommates.Data.Migrations
                     FirstName = table.Column<string>(type: "text", nullable: false),
                     LastName = table.Column<string>(type: "text", nullable: true),
                     Gender = table.Column<int>(type: "integer", nullable: true),
+                    Birthdate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     PhoneNumber = table.Column<string>(type: "text", nullable: true),
-                    IsPhoneNumberVerified = table.Column<bool>(type: "boolean", nullable: false),
-                    Email = table.Column<string>(type: "text", nullable: false),
+                    PhoneNumberVerifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    EmailAddress = table.Column<string>(type: "text", nullable: false),
                     EmailVerifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     Password = table.Column<string>(type: "text", nullable: false),
                     Bio = table.Column<string>(type: "text", nullable: true),
                     EntityState = table.Column<int>(type: "integer", nullable: false),
                     ProfilePictureFileId = table.Column<Guid>(type: "uuid", nullable: true),
+                    InactivatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
@@ -76,12 +78,13 @@ namespace Roommates.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "EmailVerifications",
+                name: "Emails",
                 schema: "roomates",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    EmailAddress = table.Column<string>(type: "text", nullable: false),
                     VerificationCode = table.Column<string>(type: "text", nullable: false),
                     Type = table.Column<int>(type: "integer", nullable: false),
                     VerifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
@@ -90,9 +93,9 @@ namespace Roommates.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_EmailVerifications", x => x.Id);
+                    table.PrimaryKey("PK_Emails", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_EmailVerifications_Users_UserId",
+                        name: "FK_Emails_Users_UserId",
                         column: x => x.UserId,
                         principalSchema: "roomates",
                         principalTable: "Users",
@@ -119,6 +122,7 @@ namespace Roommates.Data.Migrations
                     CurrencyType = table.Column<int>(type: "integer", nullable: false),
                     CreatedByUserId = table.Column<Guid>(type: "uuid", nullable: false),
                     EntityState = table.Column<int>(type: "integer", nullable: false),
+                    InactivatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
@@ -192,9 +196,9 @@ namespace Roommates.Data.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_EmailVerifications_UserId",
+                name: "IX_Emails_UserId",
                 schema: "roomates",
-                table: "EmailVerifications",
+                table: "Emails",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
@@ -225,7 +229,7 @@ namespace Roommates.Data.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "EmailVerifications",
+                name: "Emails",
                 schema: "roomates");
 
             migrationBuilder.DropTable(

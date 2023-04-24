@@ -2,7 +2,7 @@
 
 namespace Roommates.Global.Helpers
 {
-    public static class WebHelper
+    public static class WebFunctions
     {
         public const string CLAIM_USER_ID = "UserId";
 
@@ -20,5 +20,7 @@ namespace Roommates.Global.Helpers
 
             return userId;
         }
+
+
     }
 }

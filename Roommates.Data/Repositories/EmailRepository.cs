@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace Roommates.Data.Repositories
 {
-    public class EmailVerificationRepository : BaseRepository<EmailVerification, ApplicationDbContext>, IEmailVerificationRepository
+    public class EmailRepository : BaseRepository<Email, ApplicationDbContext>, IEmailRepository
     {
-        public EmailVerificationRepository(ApplicationDbContext dbContext) : base(dbContext)
+        public EmailRepository(ApplicationDbContext dbContext) : base(dbContext)
         {
         }
     }

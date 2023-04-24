@@ -2,7 +2,7 @@
 
 namespace Roommates.API.Helpers
 {
-    public static class WebFunctions
+    public static class WebHelper
     {
         public static IActionResult SentResponseWithStatusCode(Controller controller, dynamic source)
         {

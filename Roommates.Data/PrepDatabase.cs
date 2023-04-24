@@ -4,6 +4,8 @@ using Roommates.Domain.Enums;
 using Roommates.Domain.Models.Locations;
 using Roommates.Domain.Models.Posts;
 using Roommates.Domain.Models.Roommates;
+using Roommates.Domain.Models.Users;
+using Roommates.Global.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,7 +44,7 @@ namespace Roommates.Data
                              Title = "Appartment with 2 rooms for renting",
                              Address = "New York, Wall Street, 54",
                              IsForSelling = false,
-                             Description = "Good and peace place",
+                             Description = "Good and peaceful place",
                              PreferedUserGender = Gender.NotSpecified,
                              ViewedTime = 1,
                              CurrencyType = CurrencyType.USD,
@@ -58,6 +60,25 @@ namespace Roommates.Data
                         }
                     };
 
+                    var emails = new List<Email>
+                    {
+                        new Email()
+                        {
+                            Type = EmailType.EmailVerification,
+                            EmailAddress = "clearadms@gmail.com",
+                            ExpirationDate = DateTime.UtcNow.AddHours(1),
+                            VerifiedDate = DateTime.UtcNow
+                        },
+                        new Email()
+                        {
+                            Type = EmailType.EmailVerification,
+                            EmailAddress = "johndoe@gmail.com",
+                            ExpirationDate = DateTime.UtcNow.AddHours(1),
+                            VerifiedDate = DateTime.UtcNow
+                        }
+
+                    };
+
                     var users = new List<User>()
                     {
                         new User()
@@ -65,24 +86,34 @@ namespace Roommates.Data
                             FirstName = "Clear",
                             LastName = "Adams",
                             Gender = Gender.Female,
+                            Birthdate = DateTime.UtcNow,
                             PhoneNumber = "7857485748",
-                            Email = "clearadms@gmail.com",
+                            EmailAddress = "clearadms@gmail.com",
                             EmailVerifiedDate = DateTime.UtcNow,
-                            Password = "fakepassword",
-                            IsPhoneNumberVerified = false,
+                            Password = "password".ToSHA256(),
+                            PhoneNumberVerifiedDate = null,
                             LikedPosts = posts,
+                            EmailVerifications = new List<Email>
+                            {
+                                emails.First(l => l.EmailAddress == "clearadms@gmail.com")
+                            }
                         },
                         new User()
                         {
                             FirstName = "John",
                             LastName = "Doe",
+                            Birthdate = DateTime.UtcNow,
                             Gender = Gender.Male,
                             PhoneNumber = "7857353448",
-                            Email = "johndoe@gmail.com",
+                            EmailAddress = "johndoe@gmail.com",
                             EmailVerifiedDate = DateTime.UtcNow,
-                            IsPhoneNumberVerified = true,
-                            Password = "fakepassword",
+                            PhoneNumberVerifiedDate = DateTime.UtcNow,
+                            Password = "password".ToSHA256(),
                             OwnPosts = posts,
+                            EmailVerifications = new List<Email>
+                            {
+                                emails.First(l => l.EmailAddress == "johndoe@gmail.com")
+                            }
                         },
 
                     };

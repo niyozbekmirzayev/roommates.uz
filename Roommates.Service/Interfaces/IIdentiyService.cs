@@ -7,8 +7,9 @@ namespace Roommates.Service.Interfaces
     {
         Task<BaseResponse> CreateTokenAsync(CreateTokenViewModel createTokenView);
         Task<BaseResponse> CreateUserAsync(CreateUserViewModel createUserView);
-        Task<BaseResponse> DeleteUserAsync(string password);
+        Task<BaseResponse> CreateUserRemovalEmailAsync(string password);
         Task<BaseResponse> UpdatePasswordAsync(UpdatePasswordViewModel updatePasswordView);
         Task<BaseResponse> VerifyEmailAsync(string verificationCode);
+        Task<BaseResponse> VerifyUserRemovalAsync(string verificationCode);
     }
 }

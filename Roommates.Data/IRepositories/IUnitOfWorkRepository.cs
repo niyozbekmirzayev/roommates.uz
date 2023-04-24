@@ -12,6 +12,6 @@ namespace Roommates.Data.IRepositories
         public ILocationRepository LocationRepository { get; }
         public IPostRepository PostRepository { get; }
         public IUserRepository UserRepository { get; }
-        public IEmailVerificationRepository EmailVerificationRepository { get; }
+        public IEmailRepository EmailRepository { get; }
     }
 }

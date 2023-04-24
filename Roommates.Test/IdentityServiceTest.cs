@@ -73,7 +73,7 @@ namespace Roommates.Test
             var existUser = new User()
             {
                 FirstName = "Wick",
-                Email = "fake@gmail.com",
+                EmailAddress = "fake@gmail.com",
                 Password = "password"
             };
 
@@ -83,7 +83,7 @@ namespace Roommates.Test
             var view = new CreateUserViewModel()
             {
                 FirstName = "John",
-                Email = existUser.Email,
+                EmailAddress = existUser.EmailAddress,
                 Password = "password",
             };
 
@@ -104,7 +104,7 @@ namespace Roommates.Test
             var view = new CreateUserViewModel()
             {
                 FirstName = "John",
-                Email = "fake@gmail.com",
+                EmailAddress = "fake@gmail.com",
                 Password = "password",
             };
 
@@ -114,7 +114,7 @@ namespace Roommates.Test
             // Assert
             Assert.Equal(ResponseCodes.SUCCESS_ADD_DATA, response.ResponseCode);
 
-            var addedUser = userRepository.GetAsync(Guid.Parse(response.Data.ToString()));
+            var addedUser = userRepository.Get(Guid.Parse(response.Data.ToString()));
             Assert.NotNull(addedUser);
         }
 
@@ -136,7 +136,7 @@ namespace Roommates.Test
             var view = new CreateUserViewModel()
             {
                 FirstName = "John",
-                Email = "fake@gmail.com",
+                EmailAddress = "fake@gmail.com",
                 Password = "password",
             };
 

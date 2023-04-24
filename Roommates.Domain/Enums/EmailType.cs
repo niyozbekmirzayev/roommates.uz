@@ -1,9 +1,9 @@
 ﻿
 namespace Roommates.Domain.Enums
 {
-    public enum EmailVerificationType
+    public enum EmailType
     {
-        EmailConfirmation,
+        EmailVerification,
         PasswordRecovery,
         UserRemoval
     }

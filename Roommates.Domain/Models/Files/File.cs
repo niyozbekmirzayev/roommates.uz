@@ -25,6 +25,8 @@ namespace Roommates.Domain.Models.Files
         [Required]
         public EntityState EntityState { get; set; } = EntityState.Active;
 
+        public DateTime? InactivatedDate { get; set; }
+
         [Required]
         [ForeignKey(nameof(AuthorUser))]
         public Guid AuthorUserId { get; set; }

@@ -37,6 +37,6 @@ namespace Roommates.Data
         public DbSet<Post> Posts { get; set; }
         public DbSet<Location> Locations { get; set; }
         public DbSet<File> Files { get; set; }
-        public DbSet<EmailVerification> EmailVerifications { get; set; }
+        public DbSet<Email> Emails { get; set; }
     }
 }

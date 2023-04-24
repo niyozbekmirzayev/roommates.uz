@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Roommates.Data.Repositories
 {
-    public class BaseRepository<TEntity, TDbContext> : IBaseRepository<TEntity, TDbContext> where TEntity : class where TDbContext : DbContext
+    public class BaseRepository<TEntity, TDbContext> : IBaseRepository<TEntity, TDbContext> where TEntity : BaseModel where TDbContext : DbContext
     {
         public TDbContext DbContext { get; set; }
         public DbSet<TEntity> Entities { get => DbContext.Set<TEntity>(); }
@@ -52,7 +52,7 @@ namespace Roommates.Data.Repositories
             return Entities;
         }
 
-        public async Task<TEntity> GetAsync(Guid id, bool includeRemovedEntities = false)
+        public async Task<TEntity> Get(Guid id, bool includeRemovedEntities = false)
         {
             var entity = await Entities.FindAsync(id);
 
@@ -74,6 +74,7 @@ namespace Roommates.Data.Repositories
             if (entity is IPersistentEntity)
             {
                 (entity as IPersistentEntity).EntityState = Domain.Enums.EntityState.Inactive;
+                (entity as IPersistentEntity).InactivatedDate = DateTime.UtcNow;
                 DbContext.Update(entity);
             }
             else
@@ -94,6 +95,7 @@ namespace Roommates.Data.Repositories
                 foreach (TEntity entity in entities)
                 {
                     (entity as IPersistentEntity).EntityState = Domain.Enums.EntityState.Inactive;
+                    (entity as IPersistentEntity).InactivatedDate = DateTime.UtcNow;
                     DbContext.Update(entity);
                 }
             }
@@ -115,6 +117,16 @@ namespace Roommates.Data.Repositories
                 throw new Exception("Null entity can not be updated");
             }
 
+            if(entity is IPersistentEntity) 
+            {
+                if ((entity as IPersistentEntity).EntityState == Domain.Enums.EntityState.Inactive) 
+                {
+                    (entity as IPersistentEntity).InactivatedDate = DateTime.UtcNow;
+                }
+            }
+
+            entity.LastModifiedDate = DateTime.UtcNow;
+
             var entry = DbContext.Update(entity);
 
             return entry.Entity;
@@ -125,6 +137,16 @@ namespace Roommates.Data.Repositories
             if (entities == null || !entities.Any())
             {
                 throw new Exception("Null entities can not be updated");
+            }
+
+            foreach (TEntity entity in entities)
+            {
+                entity.LastModifiedDate = DateTime.UtcNow;
+
+                if((entity as IPersistentEntity).EntityState == Domain.Enums.EntityState.Inactive) 
+                {
+                    (entity as IPersistentEntity).InactivatedDate = DateTime.UtcNow;
+                }
             }
 
             DbContext.UpdateRange(entities);

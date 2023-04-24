@@ -24,13 +24,14 @@ namespace Roommates.Domain.Models.Roommates
 
         public Gender? Gender { get; set; }
 
+        public DateTime? Birthdate { get; set; }
+
         public string? PhoneNumber { get; set; }
 
-        [Required]
-        public bool IsPhoneNumberVerified { get; set; } = false;
+        public DateTime? PhoneNumberVerifiedDate { get; set; }
 
         [Required]
-        public string Email { get; set; }
+        public string EmailAddress { get; set; }
 
         public DateTime? EmailVerifiedDate { get; set; }
 
@@ -51,10 +52,11 @@ namespace Roommates.Domain.Models.Roommates
 
         public List<Post> OwnPosts { get; set; }
 
-        public List<EmailVerification> EmailVerifications { get; set; }
+        public List<Email> EmailVerifications { get; set; }
 
         [NotMapped]
         public File? ProfilePicture { get; set; }
+        public DateTime? InactivatedDate { get; set; }
 
         #endregion
     }

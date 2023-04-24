@@ -16,11 +16,14 @@ using System.Threading.Tasks;
 
 namespace Roommates.Domain.Models.Users
 {
-    public class EmailVerification : BaseModel
+    public class Email : BaseModel
     {
         [Required]
         [ForeignKey(nameof(User))]
         public Guid UserId { get; set; }
+
+        [Required]
+        public string EmailAddress { get; set; }
 
         [Required]
         public string VerificationCode { get; set; } = Guid.NewGuid().ToString() + Guid.NewGuid().ToString();
@@ -29,7 +32,7 @@ namespace Roommates.Domain.Models.Users
         public DateTime ExpirationDate = DateTime.UtcNow.AddHours(1);
 
         [Required]
-        public EmailVerificationType Type { get; set; }
+        public EmailType Type { get; set; }
 
         public DateTime? VerifiedDate { get; set; }
 

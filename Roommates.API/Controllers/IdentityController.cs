@@ -8,6 +8,7 @@ namespace Roommates.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]/[action]")]
+    [Authorize]
     public class IdentityController : Controller
     {
         private readonly IIdentiyService identiyService;
@@ -22,7 +23,7 @@ namespace Roommates.API.Controllers
         public async Task<IActionResult> SignUp(CreateUserViewModel createUserView)
         {
             var result = await identiyService.CreateUserAsync(createUserView);
-            return WebFunctions.SentResponseWithStatusCode(this, result);
+            return WebHelper.SentResponseWithStatusCode(this, result);
         }
 
         [HttpPost]
@@ -30,7 +31,7 @@ namespace Roommates.API.Controllers
         public async Task<IActionResult> Login(CreateTokenViewModel createTokenView)
         {
             var result = await identiyService.CreateTokenAsync(createTokenView);
-            return WebFunctions.SentResponseWithStatusCode(this, result);
+            return WebHelper.SentResponseWithStatusCode(this, result);
         }
 
         [HttpGet]
@@ -38,7 +39,22 @@ namespace Roommates.API.Controllers
         public async Task<IActionResult> VerifyEmail(string verifactionCode)
         {
             var result = await identiyService.VerifyEmailAsync(verifactionCode);
-            return WebFunctions.SentResponseWithStatusCode(this, result);
+            return WebHelper.SentResponseWithStatusCode(this, result);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateUserRemovalEmail(string password)
+        {
+            var result = await identiyService.CreateUserRemovalEmailAsync(password);
+            return WebHelper.SentResponseWithStatusCode(this, result);
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> VerifyUserRemovalEmail(string verifactionCode)
+        {
+            var result = await identiyService.VerifyUserRemovalAsync(verifactionCode);
+            return WebHelper.SentResponseWithStatusCode(this, result);
         }
     }
 }

@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Roommates.Domain\Roommates.Domain.csproj" />
+	  <ProjectReference Include="..\Roommates.Global\Roommates.Global.csproj" />
   </ItemGroup>
 
 </Project>

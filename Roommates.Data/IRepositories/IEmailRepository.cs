@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Roommates.Data.IRepositories
 {
-    public interface IEmailVerificationRepository : IBaseRepository<EmailVerification, ApplicationDbContext>
+    public interface IEmailRepository : IBaseRepository<Email, ApplicationDbContext>
     {
     }
 }
