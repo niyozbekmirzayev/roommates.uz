@@ -30,7 +30,7 @@ namespace Roommates.API.Middlewares
         {
             var response = new BaseResponse();
 
-            response.ResponseCode = ResponseCodes.UNEXPECTED_ERROR_EXCEPTION;
+            response.ResponseCode = ResponseCodes.ERROR_UNEXPECTED_EXCEPTION;
 
             if (!string.IsNullOrEmpty(ex.Message))
             {

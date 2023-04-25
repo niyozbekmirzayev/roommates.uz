@@ -6,9 +6,9 @@ using Roommates.Service.ViewModels;
 
 namespace Roommates.API.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]/[action]")]
-    [Authorize]
     public class IdentityController : Controller
     {
         private readonly IIdentiyService identiyService;
@@ -34,7 +34,7 @@ namespace Roommates.API.Controllers
             return WebHelper.SentResponseWithStatusCode(this, result);
         }
 
-        [HttpGet]
+        [HttpPatch]
         [AllowAnonymous]
         public async Task<IActionResult> VerifyEmail(string verifactionCode)
         {
@@ -50,21 +50,21 @@ namespace Roommates.API.Controllers
         }
 
         [HttpPatch]
-        public async Task<IActionResult> UpdatePassword(UpdatePasswordViewModel updatePasswordViewModel)
+        public async Task<IActionResult> UpdatePassword(UpdatePasswordViewModel updatePasswordView)
         {
-            var result = await identiyService.UpdatePasswordAsync(updatePasswordViewModel);
+            var result = await identiyService.UpdatePasswordAsync(updatePasswordView);
             return WebHelper.SentResponseWithStatusCode(this, result);
         }
 
         [HttpPatch]
         [AllowAnonymous]
-        public async Task<IActionResult> RecoverPassword(string verificationCode, string password, string confirmPassword)
+        public async Task<IActionResult> RecoverPassword(RecoverPasswordViewModel recoverPasswordView)
         {
-            var result = await identiyService.RecoverPasswordAsync(verificationCode, password, confirmPassword);
+            var result = await identiyService.RecoverPasswordAsync(recoverPasswordView);
             return WebHelper.SentResponseWithStatusCode(this, result);
         }
 
-        [HttpGet]
+        [HttpPatch]
         [AllowAnonymous]
         public async Task<IActionResult> VerifyUserRemovalEmail(string verifactionCode)
         {

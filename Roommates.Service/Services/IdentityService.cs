@@ -117,7 +117,7 @@ namespace Roommates.Service.Services
             var user = mapper.Map<User>(createUserView);
             user.Password = user.Password.ToSHA256();
 
-            var emailExpirationTime = int.Parse(configuration.GetSection("EmailExpirationTime").Value);
+            var emailExpirationTime = int.Parse(configuration.GetSection("EmailExpirationPeriod").Value);
             user.EmailVerifications = new List<Email>
             {
                 new Email()
@@ -177,7 +177,7 @@ namespace Roommates.Service.Services
                 return response;
             }
 
-            var emailExpirationTime = int.Parse(configuration.GetSection("EmailExpirationTime").Value);
+            var emailExpirationTime = int.Parse(configuration.GetSection("EmailExpirationPeriod").Value);
             var userRemovalEmail = new Email()
             {
                 Type = EmailType.UserRemoval,
@@ -186,9 +186,9 @@ namespace Roommates.Service.Services
                 EmailAddress = currentUser.EmailAddress,
             };
 
-            var createdVerification = await unitOfWorkRepository.EmailRepository.AddAsync(userRemovalEmail);
+            var email = await unitOfWorkRepository.EmailRepository.AddAsync(userRemovalEmail);
 
-            var emailBody = GetUserRemovalEmailBody(createdVerification, currentUser);
+            var emailBody = GetUserRemovalEmailBody(email, currentUser);
             var emailView = new EmailViewModel
             {
                 To = currentUser.EmailAddress,
@@ -202,7 +202,7 @@ namespace Roommates.Service.Services
             if (await unitOfWorkRepository.EmailRepository.SaveChangesAsync() > 0)
             {
                 response.ResponseCode = ResponseCodes.SUCCESS_ADD_DATA;
-                response.Data = createdVerification.Id;
+                response.Data = email.Id;
 
                 return response;
             }
@@ -226,7 +226,7 @@ namespace Roommates.Service.Services
                 return response;
             }
 
-            var emailExpirationTime = int.Parse(configuration.GetSection("EmailExpirationTime").Value);
+            var emailExpirationTime = int.Parse(configuration.GetSection("EmailExpirationPeriod").Value);
             var passwordRecoveryEmail = new Email()
             {
                 Type = EmailType.PasswordRecovery,
@@ -385,7 +385,7 @@ namespace Roommates.Service.Services
 
             if (await userRepository.SaveChangesAsync() > 0)
             {
-                response.ResponseCode = ResponseCodes.SUCCESS_VERIFIED_DATA;
+                response.ResponseCode = ResponseCodes.SUCCESS_DELETE_DATA;
 
                 return response;
             }
@@ -396,11 +396,65 @@ namespace Roommates.Service.Services
             return response;
         }
 
-        public async Task<BaseResponse> RecoverPasswordAsync(string verificationCode, string password, string confirmPassword) 
+        public async Task<BaseResponse> RecoverPasswordAsync(RecoverPasswordViewModel recoverPasswordView) 
         {
-            throw new NotImplementedException();
-        }
+            var response = new BaseResponse();
 
+            var email = await unitOfWorkRepository.EmailRepository.GetAll().Include(l => l.User)
+               .FirstOrDefaultAsync(l => l.VerificationCode == recoverPasswordView.VerificatinCode && l.Type == EmailType.PasswordRecovery);
+
+            if (email == null)
+            {
+                response.Error = new BaseError("verification code not found", code: ErrorCodes.NotFoud);
+                response.ResponseCode = ResponseCodes.ERROR_NOT_FOUND_DATA;
+
+                return response;
+            }
+
+            if(email.User == null) 
+            {
+                response.Error = new BaseError("user not found", code: ErrorCodes.NotFoud);
+                response.ResponseCode = ResponseCodes.ERROR_NOT_FOUND_DATA;
+
+                return response;
+            }
+
+            if (email.ExpirationDate < DateTime.UtcNow)
+            {
+                response.Error = new BaseError("email timed out", code: ErrorCodes.Gone);
+                response.ResponseCode = ResponseCodes.ERROR_TIMED_OUT_DATA;
+
+                return response;
+            }
+
+            if(email.VerifiedDate != null) 
+            {
+                response.Error = new BaseError("verification code already used", code: ErrorCodes.InvalidToken);
+                response.ResponseCode = ResponseCodes.ERROR_INVALID_TOKEN;
+
+                return response;
+            }
+
+            email.VerifiedDate = DateTime.UtcNow;
+            unitOfWorkRepository.EmailRepository.Update(email);
+
+            email.User.Password = recoverPasswordView.NewPassword.ToSHA256();
+            userRepository.Update(email.User);
+
+            if (await userRepository.SaveChangesAsync() > 0)
+            {
+                response.ResponseCode = ResponseCodes.SUCCESS_UPDATE_DATA;
+
+                return response;
+            }
+
+            response.Error = new BaseError("no changes made in the database");
+            response.ResponseCode = ResponseCodes.ERROR_SAVE_DATA;
+
+            return response;
+        }
+        
+        // Need to rethink about when front is ready
         private string GetEmailVerificationEmailBody(Email emailVerification, User user)
         {
             string localIpAddress = httpContextAccessor.HttpContext.Request.Host.Value.ToString();

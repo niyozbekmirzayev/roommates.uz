@@ -8,5 +8,6 @@ namespace Roommates.Global.Response
         public const int Unauthorized = 401;
         public const int NotFoud = 404;
         public const int Gone = 410;
+        public const int InvalidToken = 498;
     }
 }

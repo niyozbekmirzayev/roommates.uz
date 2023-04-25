@@ -12,6 +12,6 @@ namespace Roommates.Service.Interfaces
         Task<BaseResponse> VerifyEmailAsync(string verificationCode);
         Task<BaseResponse> VerifyUserRemovalAsync(string verificationCode);
         Task<BaseResponse> CreatePasswordRecoveryEmailAsync(string emailAddress);
-        Task<BaseResponse> RecoverPasswordAsync(string verificationCode, string password, string confirmPassword);
+        Task<BaseResponse> RecoverPasswordAsync(RecoverPasswordViewModel recoverPasswordView);
     }
 }
