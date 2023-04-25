@@ -117,9 +117,9 @@ namespace Roommates.Data.Repositories
                 throw new Exception("Null entity can not be updated");
             }
 
-            if(entity is IPersistentEntity) 
+            if (entity is IPersistentEntity)
             {
-                if ((entity as IPersistentEntity).EntityState == Domain.Enums.EntityState.Inactive) 
+                if ((entity as IPersistentEntity).EntityState == Domain.Enums.EntityState.Inactive)
                 {
                     (entity as IPersistentEntity).InactivatedDate = DateTime.UtcNow;
                 }
@@ -143,7 +143,7 @@ namespace Roommates.Data.Repositories
             {
                 entity.LastModifiedDate = DateTime.UtcNow;
 
-                if((entity as IPersistentEntity).EntityState == Domain.Enums.EntityState.Inactive) 
+                if ((entity as IPersistentEntity).EntityState == Domain.Enums.EntityState.Inactive)
                 {
                     (entity as IPersistentEntity).InactivatedDate = DateTime.UtcNow;
                 }

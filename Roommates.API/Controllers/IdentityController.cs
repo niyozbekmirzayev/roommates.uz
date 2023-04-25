@@ -56,6 +56,14 @@ namespace Roommates.API.Controllers
             return WebHelper.SentResponseWithStatusCode(this, result);
         }
 
+        [HttpPatch]
+        [AllowAnonymous]
+        public async Task<IActionResult> RecoverPassword(string verificationCode, string password, string confirmPassword)
+        {
+            var result = await identiyService.RecoverPasswordAsync(verificationCode, password, confirmPassword);
+            return WebHelper.SentResponseWithStatusCode(this, result);
+        }
+
         [HttpGet]
         [AllowAnonymous]
         public async Task<IActionResult> VerifyUserRemovalEmail(string verifactionCode)

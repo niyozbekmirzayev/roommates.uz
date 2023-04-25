@@ -5,7 +5,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Roommates.Data.IRepositories;
-using Roommates.Data.Repositories;
 using Roommates.Domain.Enums;
 using Roommates.Domain.Models.Roommates;
 using Roommates.Domain.Models.Users;
@@ -22,7 +21,8 @@ namespace Roommates.Service.Services
     public class IdentityService : IIdentiyService
     {
         private const string EMAIL_SUBJECT_VERIFY_EMAIL = "Verify your email address";
-        private const string EMAIL_SUBJECT_USER_REMOVAL = "Verify Account Removal";
+        private const string EMAIL_SUBJECT_USER_REMOVAL = "Verify account removal";
+        private const string EMAIL_SUBJECT_PASSWORD_RECOVERY = "Recovery you password";
 
         private readonly IUserRepository userRepository;
         private readonly IEmailService emailService;
@@ -213,6 +213,54 @@ namespace Roommates.Service.Services
             return response;
         }
 
+        public async Task<BaseResponse> CreatePasswordRecoveryEmailAsync(string emailAddress)
+        {
+            var response = new BaseResponse();
+
+            var user = userRepository.GetAll().FirstOrDefault(l => l.EmailAddress.ToLower() == emailAddress.ToLower());
+            if (user == null)
+            {
+                response.ResponseCode = ResponseCodes.ERROR_NOT_FOUND_DATA;
+                response.Error = new BaseError("user not found", ErrorCodes.NotFoud);
+
+                return response;
+            }
+
+            var emailExpirationTime = int.Parse(configuration.GetSection("EmailExpirationTime").Value);
+            var passwordRecoveryEmail = new Email()
+            {
+                Type = EmailType.PasswordRecovery,
+                UserId = user.Id,
+                ExpirationDate = DateTime.UtcNow.AddHours(emailExpirationTime),
+                EmailAddress = user.EmailAddress,
+            };
+
+            var email = await unitOfWorkRepository.EmailRepository.AddAsync(passwordRecoveryEmail);
+
+            var emailBody = GetPasswordRecoveryEmailBody(email, user);
+            var emailView = new EmailViewModel
+            {
+                To = user.EmailAddress,
+                Subject = EMAIL_SUBJECT_PASSWORD_RECOVERY,
+                Body = emailBody,
+            };
+
+            await emailService.SendEmailAsync(emailView);
+
+            if (await unitOfWorkRepository.EmailRepository.SaveChangesAsync() > 0)
+            {
+                response.ResponseCode = ResponseCodes.SUCCESS_ADD_DATA;
+                response.Data = email.Id;
+
+                return response;
+            }
+
+            response.Error = new BaseError("no changes made in the database");
+            response.ResponseCode = ResponseCodes.ERROR_SAVE_DATA;
+
+            return response;
+        }
+
         public async Task<BaseResponse> UpdatePasswordAsync(UpdatePasswordViewModel updatePasswordView)
         {
             var response = new BaseResponse();
@@ -300,14 +348,14 @@ namespace Roommates.Service.Services
             return response;
         }
 
-        public async Task<BaseResponse> VerifyUserRemovalAsync(string verificationCode) 
+        public async Task<BaseResponse> VerifyUserRemovalAsync(string verificationCode)
         {
             var response = new BaseResponse();
 
             var email = await unitOfWorkRepository.EmailRepository.GetAll().Include(l => l.User)
                 .FirstOrDefaultAsync(l => l.VerificationCode == verificationCode && l.Type == EmailType.UserRemoval);
 
-            if (email == null) 
+            if (email == null)
             {
                 response.Error = new BaseError("verification code not found", code: ErrorCodes.NotFoud);
                 response.ResponseCode = ResponseCodes.ERROR_NOT_FOUND_DATA;
@@ -323,7 +371,7 @@ namespace Roommates.Service.Services
                 return response;
             }
 
-            if(email.User == null && email.VerifiedDate != null) 
+            if (email.User == null && email.VerifiedDate != null)
             {
                 response.ResponseCode = ResponseCodes.SUCCESS_VERIFIED_DATA;
 
@@ -346,6 +394,11 @@ namespace Roommates.Service.Services
             response.ResponseCode = ResponseCodes.ERROR_SAVE_DATA;
 
             return response;
+        }
+
+        public async Task<BaseResponse> RecoverPasswordAsync(string verificationCode, string password, string confirmPassword) 
+        {
+            throw new NotImplementedException();
         }
 
         private string GetEmailVerificationEmailBody(Email emailVerification, User user)
@@ -389,6 +442,31 @@ namespace Roommates.Service.Services
                 $"    <p>We have received a request to remove your account. To confirm that you wish to proceed with this request, please click the button below.</p>" +
                 $"    <p><strong>Note:</strong> If you did not request to remove your account, please ignore this email</p>" +
                 $"    <a href=\"{confirmationLink}\" target=\"_blank\" style=\"display:inline-block;padding:12px 24px;background-color:#FF0000;color:#ffffff;font-size:18px;text-decoration:none;border-radius:5px;\">Verify Account Removal</a>" +
+                $"    <p>Thank you for choosing our service!</p>" +
+                $"    <p>Best regards</p>" +
+                $"  </body>" +
+                $"</html>";
+
+            return htmlEmailBody;
+        }
+
+        private string GetPasswordRecoveryEmailBody(Email emailVerification, User user)
+        {
+            string localIpAddress = httpContextAccessor.HttpContext.Request.Host.Value.ToString();
+            string confirmationLink = $"https://{localIpAddress}/api/Identity/RecoverPassword?verifactionCode={emailVerification.VerificationCode}";
+
+            var htmlEmailBody = $"<!DOCTYPE html>" +
+                $"<html>" +
+                $" <head>" +
+                $"    <title>Password Recovery</title>" +
+                $"  </head>" +
+                $"  <body>" +
+                $"    <h1>Password Recovery</h1>" +
+                $"    <p>Dear {user.FirstName},</p>" +
+                $"    <p>We recently received a request to reset your account password for roommates.uz</p>" +
+                $"    <p>To complete the password reset process, please click the button below</p>" +
+                $"   <a href=\"{confirmationLink}\" target=\"_blank\" style=\"display:inline-block;padding:12px 24px;background-color:#3366cc;color:#ffffff;font-size:18px;text-decoration:none;border-radius:5px;\">Recover Password</a>" +
+                $"    <p>If you did not initiate this request, please ignore this email.</p>" +
                 $"    <p>Thank you for choosing our service!</p>" +
                 $"    <p>Best regards</p>" +
                 $"  </body>" +
