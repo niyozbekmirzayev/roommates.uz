@@ -1,11 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Roommates;
-using Roommates.Domain;
-using Roommates.Domain.Base;
-using Roommates.Domain.Enums;
-using Roommates.Domain.Models;
-using Roommates.Domain.Models.Roommates;
-using Roommates.Domain.Models.Users;
+using Roommates.Infrastructure.Base;
+using Roommates.Infrastructure.Enums;
+using Roommates.Infrastructure.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -14,7 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Roommates.Domain.Models.Users
+namespace Roommates.Infrastructure.Models
 {
     public class Email : BaseModel
     {

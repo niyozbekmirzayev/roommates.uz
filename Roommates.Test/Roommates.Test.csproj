@@ -24,8 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Roommates.Data\Roommates.Data.csproj" />
-    <ProjectReference Include="..\Roommates.Service\Roommates.Service.csproj" />
+    <ProjectReference Include="..\Roommates.API\Roommates.Api.csproj" />
   </ItemGroup>
 
 </Project>

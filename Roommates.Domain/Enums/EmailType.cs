@@ -1,5 +1,5 @@
 ﻿
-namespace Roommates.Domain.Enums
+namespace Roommates.Infrastructure.Enums
 {
     public enum EmailType
     {

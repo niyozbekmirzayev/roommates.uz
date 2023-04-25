@@ -2,17 +2,17 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using Roommates.API.Helpers;
-using Roommates.Data;
-using Roommates.Data.IRepositories;
-using Roommates.Data.Repositories;
-using Roommates.Service.Interfaces;
-using Roommates.Service.Mapping;
-using Roommates.Service.Services;
+using Roommates.Api.Data;
+using Roommates.Api.Data.IRepositories;
+using Roommates.Api.Data.Repositories;
+using Roommates.Api.Helpers;
+using Roommates.Api.Service.Interfaces;
+using Roommates.Api.Service.Mapping;
+using Roommates.Api.Service.Services;
 using Serilog;
 using System.Text;
 
-namespace Roommates.API
+namespace Roommates.Api
 {
     public class Program
     {

@@ -1,9 +1,8 @@
 ﻿using Newtonsoft.Json.Converters;
-using Roommates.Domain.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
-namespace Roommates.Domain.Base
+namespace Roommates.Infrastructure.Base
 {
     public class BaseModel
     {

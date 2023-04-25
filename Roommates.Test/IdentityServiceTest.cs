@@ -4,15 +4,15 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Moq;
-using Roommates.Data;
-using Roommates.Data.IRepositories;
-using Roommates.Data.Repositories;
-using Roommates.Domain.Models.Roommates;
-using Roommates.Global.Response;
-using Roommates.Service.Interfaces;
-using Roommates.Service.Mapping;
-using Roommates.Service.Services;
-using Roommates.Service.ViewModels;
+using Roommates.Api.Data;
+using Roommates.Api.Data.IRepositories;
+using Roommates.Api.Data.Repositories;
+using Roommates.Api.Service.Interfaces;
+using Roommates.Api.Service.Mapping;
+using Roommates.Api.Service.Services;
+using Roommates.Api.Service.ViewModels;
+using Roommates.Infrastructure.Models;
+using Roommates.Infrastructure.Response;
 using Xunit;
 
 namespace Roommates.Test

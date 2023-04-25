@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
-using Roommates.Global.Response;
+using Roommates.Infrastructure.Response;
 
-namespace Roommates.API.Middlewares
+namespace Roommates.Api.Middlewares
 {
     public class GlobalErrorHandlerMiddleware
     {

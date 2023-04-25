@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Roommates.Domain.Enums
+namespace Roommates.Infrastructure.Enums
 {
     public enum Gender
     {

@@ -1,7 +1,6 @@
-﻿
-using Roommates.Domain.Enums;
+﻿using Roommates.Infrastructure.Enums;
 
-namespace Roommates.Domain.Base
+namespace Roommates.Infrastructure.Base
 {
     public interface IPersistentEntity
     {

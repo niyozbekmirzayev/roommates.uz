@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Roommates.API.Helpers;
-using Roommates.Service.Interfaces;
-using Roommates.Service.ViewModels;
+using Roommates.Api.Helpers;
+using Roommates.Api.Service.Interfaces;
+using Roommates.Api.Service.ViewModels;
 
-namespace Roommates.API.Controllers
+namespace Roommates.Api.Controllers
 {
     [Authorize]
     [ApiController]

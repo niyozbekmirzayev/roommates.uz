@@ -1,15 +1,12 @@
 ﻿using Newtonsoft.Json.Converters;
 using Roommates;
-using Roommates.Domain;
-using Roommates.Domain.Base;
-using Roommates.Domain.Enums;
-using Roommates.Domain.Models;
-using Roommates.Domain.Models.Files;
-using Roommates.Domain.Models.Roommates;
+using Roommates.Infrastructure.Base;
+using Roommates.Infrastructure.Enums;
+using Roommates.Infrastructure.Models;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Roommates.Domain.Models.Files
+namespace Roommates.Infrastructure.Models
 {
     public class File : BaseModel, IPersistentEntity
     {
