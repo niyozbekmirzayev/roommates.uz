@@ -213,9 +213,44 @@ namespace Roommates.Service.Services
             return response;
         }
 
-        public Task<BaseResponse> UpdatePasswordAsync(UpdatePasswordViewModel updatePasswordView)
+        public async Task<BaseResponse> UpdatePasswordAsync(UpdatePasswordViewModel updatePasswordView)
         {
-            throw new NotImplementedException();
+            var response = new BaseResponse();
+
+            Guid currentUserId = WebFunctions.GetUserId(httpContextAccessor.HttpContext);
+
+            var currentUser = await unitOfWorkRepository.UserRepository.Get(currentUserId);
+            if (currentUser == null)
+            {
+                response.ResponseCode = ResponseCodes.ERROR_NOT_FOUND_DATA;
+                response.Error = new BaseError("current user not found", ErrorCodes.NotFoud);
+
+                return response;
+            }
+
+            if (!currentUser.Password.Equals(updatePasswordView.OldPassword.ToSHA256()))
+            {
+                response.ResponseCode = ResponseCodes.ERROR_INVALID_DATA;
+                response.Error = new BaseError("invalid password", ErrorCodes.BadRequest);
+
+                return response;
+            }
+
+            currentUser.Password = updatePasswordView.NewPassword.ToSHA256();
+            userRepository.Update(currentUser);
+
+            if (await unitOfWorkRepository.EmailRepository.SaveChangesAsync() > 0)
+            {
+                response.ResponseCode = ResponseCodes.SUCCESS_UPDATE_DATA;
+                response.Data = currentUser.Id;
+
+                return response;
+            }
+
+            response.Error = new BaseError("no changes made in the database");
+            response.ResponseCode = ResponseCodes.ERROR_SAVE_DATA;
+
+            return response;
         }
 
         public async Task<BaseResponse> VerifyEmailAsync(string verificationCode)
