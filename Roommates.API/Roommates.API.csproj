@@ -21,7 +21,7 @@
 	
 
   <ItemGroup>
-    <ProjectReference Include="..\Roommates.Domain\Roommates.Infrastructure.csproj" />
+    <ProjectReference Include="..\Roommates.Infrastructure\Roommates.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
