@@ -2,7 +2,7 @@
 {
     public class BaseResponse
     {
-        public object Data { get; set; }
+        public object Data { get; set; } = null;
         public string ResponseCode { get; set; }
         public BaseError Error { get; set; }
     }

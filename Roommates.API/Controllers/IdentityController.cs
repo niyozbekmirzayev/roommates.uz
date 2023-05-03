@@ -22,54 +22,47 @@ namespace Roommates.Api.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> SignUp(CreateUserViewModel createUserView)
         {
-            var result = await identiyService.CreateUserAsync(createUserView);
-            return WebHelper.SentResponseWithStatusCode(this, result);
+           return WebHelper.SentResponseWithStatusCode(this, await identiyService.CreateUserAsync(createUserView));
         }
 
         [HttpPost]
         [AllowAnonymous]
         public async Task<IActionResult> Login(CreateTokenViewModel createTokenView)
         {
-            var result = await identiyService.CreateTokenAsync(createTokenView);
-            return WebHelper.SentResponseWithStatusCode(this, result);
+            return WebHelper.SentResponseWithStatusCode(this, await identiyService.CreateTokenAsync(createTokenView));
         }
 
         [HttpPatch]
         [AllowAnonymous]
         public async Task<IActionResult> VerifyEmail(string verifactionCode)
         {
-            var result = await identiyService.VerifyEmailAsync(verifactionCode);
-            return WebHelper.SentResponseWithStatusCode(this, result);
+            return WebHelper.SentResponseWithStatusCode(this, await identiyService.VerifyEmailAsync(verifactionCode));
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateUserRemovalEmail(string password)
         {
-            var result = await identiyService.CreateUserRemovalEmailAsync(password);
-            return WebHelper.SentResponseWithStatusCode(this, result);
+            return WebHelper.SentResponseWithStatusCode(this, await identiyService.CreateUserRemovalEmailAsync(password));
         }
 
         [HttpPatch]
         public async Task<IActionResult> UpdatePassword(UpdatePasswordViewModel updatePasswordView)
         {
-            var result = await identiyService.UpdatePasswordAsync(updatePasswordView);
-            return WebHelper.SentResponseWithStatusCode(this, result);
+            return WebHelper.SentResponseWithStatusCode(this, await identiyService.UpdatePasswordAsync(updatePasswordView));
         }
 
         [HttpPatch]
         [AllowAnonymous]
         public async Task<IActionResult> RecoverPassword(RecoverPasswordViewModel recoverPasswordView)
         {
-            var result = await identiyService.RecoverPasswordAsync(recoverPasswordView);
-            return WebHelper.SentResponseWithStatusCode(this, result);
+            return WebHelper.SentResponseWithStatusCode(this, await identiyService.RecoverPasswordAsync(recoverPasswordView));
         }
 
         [HttpPatch]
         [AllowAnonymous]
         public async Task<IActionResult> VerifyUserRemovalEmail(string verifactionCode)
         {
-            var result = await identiyService.VerifyUserRemovalAsync(verifactionCode);
-            return WebHelper.SentResponseWithStatusCode(this, result);
+            return WebHelper.SentResponseWithStatusCode(this, await identiyService.VerifyUserRemovalAsync(verifactionCode));
         }
     }
 }
