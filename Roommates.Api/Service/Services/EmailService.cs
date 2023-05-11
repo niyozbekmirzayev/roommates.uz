@@ -3,7 +3,7 @@ using MailKit.Security;
 using MimeKit;
 using MimeKit.Text;
 using Roommates.Api.Service.Interfaces;
-using Roommates.Api.Service.ViewModels;
+using Roommates.Api.Service.ViewModels.IdentityService;
 
 namespace Roommates.Api.Service.Services
 {

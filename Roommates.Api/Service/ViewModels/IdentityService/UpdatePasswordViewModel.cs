@@ -1,13 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Roommates.Api.Service.ViewModels
+namespace Roommates.Api.Service.ViewModels.IdentityService
 {
     public class UpdatePasswordViewModel
     {
-        [Required(ErrorMessage = "Old password is required")]
+        [Required]
         public string OldPassword { get; set; }
 
-        [Required(ErrorMessage = "New password is required")]
+        [Required]
         public string NewPassword { get; set; }
 
         [Compare(nameof(NewPassword), ErrorMessage = "Password does not match")]

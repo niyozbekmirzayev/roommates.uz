@@ -1,13 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Roommates.Api.Service.ViewModels
+namespace Roommates.Api.Service.ViewModels.IdentityService
 {
     public class RecoverPasswordViewModel
     {
-        [Required(ErrorMessage = "Verificatin code is required")]
+        [Required]
         public string VerificatinCode { get; set; }
 
-        [Required(ErrorMessage = "New password is required")]
+        [Required]
         public string NewPassword { get; set; }
 
         [Compare(nameof(NewPassword), ErrorMessage = "Password does not match")]

@@ -1,19 +1,19 @@
 ﻿using Roommates.Infrastructure.Enums;
 using System.ComponentModel.DataAnnotations;
 
-namespace Roommates.Api.Service.ViewModels
+namespace Roommates.Api.Service.ViewModels.IdentityService
 {
     public class CreateUserViewModel
     {
-        [Required(ErrorMessage = "Firstname is required")]
+        [Required]
         public string FirstName { get; set; }
         public string LastName { get; set; }
 
-        [Required(ErrorMessage = "Email address  is required")]
-        [EmailAddress(ErrorMessage = "Invalid email address")]
+        [Required]
+        [EmailAddress]
         public string EmailAddress { get; set; }
 
-        [Required(ErrorMessage = "Password is required")]
+        [Required]
         //[MinLength(8, ErrorMessage = "Password must be at least 8 characters long")]
         public string Password { get; set; }
 

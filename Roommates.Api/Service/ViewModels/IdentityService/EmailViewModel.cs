@@ -1,4 +1,4 @@
-﻿namespace Roommates.Api.Service.ViewModels
+﻿namespace Roommates.Api.Service.ViewModels.IdentityService
 {
     public class EmailViewModel
     {

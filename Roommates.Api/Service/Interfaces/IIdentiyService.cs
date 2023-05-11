@@ -1,4 +1,4 @@
-﻿using Roommates.Api.Service.ViewModels;
+﻿using Roommates.Api.Service.ViewModels.IdentityService;
 using Roommates.Infrastructure.Response;
 
 namespace Roommates.Api.Service.Interfaces
