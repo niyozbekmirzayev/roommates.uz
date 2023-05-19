@@ -14,7 +14,7 @@ using System.Text;
 
 namespace Roommates.Api.Service.Services
 {
-    public class IdentityService : IIdentiyService
+    public class IdentityService : BaseService, IIdentiyService
     {
         private const string EMAIL_SUBJECT_VERIFY_EMAIL = "Verify your email address";
         private const string EMAIL_SUBJECT_USER_REMOVAL = "Verify account removal";
@@ -22,11 +22,6 @@ namespace Roommates.Api.Service.Services
 
         private readonly IUserRepository userRepository;
         private readonly IEmailService emailService;
-        private readonly IMapper mapper;
-        private readonly IConfiguration configuration;
-        private readonly ILogger<IdentityService> logger;
-        private readonly IUnitOfWorkRepository unitOfWorkRepository;
-        private readonly IHttpContextAccessor httpContextAccessor;
 
         public IdentityService(
             IUserRepository userRepository,
@@ -35,15 +30,10 @@ namespace Roommates.Api.Service.Services
             ILogger<IdentityService> logger,
             IUnitOfWorkRepository unitOfWorkRepository,
             IHttpContextAccessor httpContextAccessor,
-            IConfiguration configuration)
+            IConfiguration configuration) : base(httpContextAccessor, mapper, configuration, unitOfWorkRepository, logger)
         {
             this.userRepository = userRepository;
-            this.mapper = mapper;
             this.emailService = emailService;
-            this.configuration = configuration;
-            this.logger = logger;
-            this.unitOfWorkRepository = unitOfWorkRepository;
-            this.httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<BaseResponse> CreateTokenAsync(CreateTokenViewModel createTokenView)

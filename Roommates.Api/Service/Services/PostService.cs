@@ -1,19 +1,16 @@
 ﻿using AutoMapper;
 using Roommates.Api.Data.IRepositories;
+using Roommates.Api.Helpers;
 using Roommates.Api.Service.Interfaces;
 using Roommates.Api.Service.ViewModels.PostService;
+using Roommates.Infrastructure.Models;
 using Roommates.Infrastructure.Response;
 
 namespace Roommates.Api.Service.Services
 {
-    public class PostService : IPostService
+    public class PostService : BaseService, IPostService
     {
         private readonly IPostRepository postRepository;
-        private readonly IMapper mapper;
-        private readonly IConfiguration configuration;
-        private readonly ILogger<PostService> logger;
-        private readonly IUnitOfWorkRepository unitOfWorkRepository;
-        private readonly IHttpContextAccessor httpContextAccessor;
 
         public PostService(
            IPostRepository postRepository,
@@ -21,19 +18,26 @@ namespace Roommates.Api.Service.Services
            ILogger<PostService> logger,
            IUnitOfWorkRepository unitOfWorkRepository,
            IHttpContextAccessor httpContextAccessor,
-           IConfiguration configuration)
+           IConfiguration configuration) : base(httpContextAccessor, mapper, configuration, unitOfWorkRepository, logger)
         {
             this.postRepository = postRepository;
-            this.mapper = mapper;
-            this.configuration = configuration;
-            this.logger = logger;
-            this.unitOfWorkRepository = unitOfWorkRepository;
-            this.httpContextAccessor = httpContextAccessor;
         }
 
-        public Task<BaseResponse> CreatePostAsync(CreatePostViewModel viewModel)
+        public async Task<BaseResponse> CreatePostAsync(CreatePostViewModel viewModel)
         {
-            throw new NotImplementedException();
+            var response = new BaseResponse();
+
+            var currentUserId = WebHelper.GetUserId(httpContextAccessor.HttpContext);
+
+            var newPost = mapper.Map<Post>(viewModel);
+            newPost.CreatedByUserId = currentUserId;
+
+            await postRepository.AddAsync(newPost);
+
+            response.Data = newPost.Id;
+            response.ResponseCode = ResponseCodes.SUCCESS_ADD_DATA;
+
+            return response;
         }
     }
 }

@@ -3,7 +3,7 @@ using Roommates.Infrastructure.Response;
 
 namespace Roommates.Api.Service.Interfaces
 {
-    public interface IIdentiyService
+    public interface IIdentiyService : IBaseService
     {
         Task<BaseResponse> CreateTokenAsync(CreateTokenViewModel createTokenView);
         Task<BaseResponse> CreateUserAsync(CreateUserViewModel createUserView);
