@@ -10,7 +10,7 @@ using Roommates.Api.Data.Repositories;
 using Roommates.Api.Service.Interfaces;
 using Roommates.Api.Service.Mapping;
 using Roommates.Api.Service.Services;
-using Roommates.Api.Service.ViewModels;
+using Roommates.Api.Service.ViewModels.IdentityService;
 using Roommates.Infrastructure.Models;
 using Roommates.Infrastructure.Response;
 using Xunit;

@@ -1,6 +1,4 @@
-﻿using Roommates.Infrastructure.Base;
-
-namespace Roommates.Api.Service.Interfaces
+﻿namespace Roommates.Api.Service.Interfaces
 {
     public interface IBaseService
     {

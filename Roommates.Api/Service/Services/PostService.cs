@@ -32,10 +32,18 @@ namespace Roommates.Api.Service.Services
             var newPost = mapper.Map<Post>(viewModel);
             newPost.CreatedByUserId = currentUserId;
 
-            await postRepository.AddAsync(newPost);
+            newPost = await postRepository.AddAsync(newPost);
 
-            response.Data = newPost.Id;
-            response.ResponseCode = ResponseCodes.SUCCESS_ADD_DATA;
+            if (await postRepository.SaveChangesAsync() > 0)
+            {
+                response.Data = newPost.Id;
+                response.ResponseCode = ResponseCodes.SUCCESS_ADD_DATA;
+
+                return response;
+            }
+
+            response.Error = new BaseError("no changes made in the database");
+            response.ResponseCode = ResponseCodes.ERROR_SAVE_DATA;
 
             return response;
         }

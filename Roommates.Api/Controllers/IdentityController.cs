@@ -22,7 +22,7 @@ namespace Roommates.Api.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> SignUp(CreateUserViewModel createUserView)
         {
-           return WebHelper.SentResponseWithStatusCode(this, await identiyService.CreateUserAsync(createUserView));
+            return WebHelper.SentResponseWithStatusCode(this, await identiyService.CreateUserAsync(createUserView));
         }
 
         [HttpPost]

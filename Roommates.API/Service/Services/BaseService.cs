@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
-using Microsoft.EntityFrameworkCore;
 using Roommates.Api.Data.IRepositories;
 using Roommates.Api.Service.Interfaces;
-using Roommates.Infrastructure.Base;
 
 namespace Roommates.Api.Service.Services
 {

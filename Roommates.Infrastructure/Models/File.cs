@@ -28,6 +28,9 @@ namespace Roommates.Infrastructure.Models
         [ForeignKey(nameof(AuthorUser))]
         public Guid AuthorUserId { get; set; }
 
+        [Required]
+        public bool IsTemporary { get; set; } = false;
+
         #region ForeignKeys
 
         [NotMapped]
