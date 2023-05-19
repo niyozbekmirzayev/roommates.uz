@@ -4,7 +4,7 @@
 
 namespace Roommates.Api.Migrations
 {
-    public partial class InitialMigration : Migration
+    public partial class Initial_Migration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -24,6 +24,7 @@ namespace Roommates.Api.Migrations
                     EntityState = table.Column<int>(type: "integer", nullable: false),
                     InactivatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     AuthorUserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    IsTemporary = table.Column<bool>(type: "boolean", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },

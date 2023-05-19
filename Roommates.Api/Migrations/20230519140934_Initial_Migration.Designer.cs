@@ -12,8 +12,8 @@ using Roommates.Api.Data;
 namespace Roommates.Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230425135608_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20230519140934_Initial_Migration")]
+    partial class Initial_Migration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -99,6 +99,9 @@ namespace Roommates.Api.Migrations
 
                     b.Property<DateTime?>("InactivatedDate")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsTemporary")
+                        .HasColumnType("boolean");
 
                     b.Property<DateTime?>("LastModifiedDate")
                         .HasColumnType("timestamp with time zone");
