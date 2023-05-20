@@ -7,5 +7,6 @@
         public IPostRepository PostRepository { get; }
         public IUserRepository UserRepository { get; }
         public IEmailRepository EmailRepository { get; }
+        public IFilePostRepository FilePostRepository { get; }
     }
 }

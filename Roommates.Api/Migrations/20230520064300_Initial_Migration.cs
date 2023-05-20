@@ -42,6 +42,7 @@ namespace Roommates.Api.Migrations
                     Name = table.Column<string>(type: "text", nullable: false),
                     Latitude = table.Column<double>(type: "double precision", nullable: false),
                     Longitude = table.Column<double>(type: "double precision", nullable: false),
+                    AuthorUserId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
@@ -130,13 +131,6 @@ namespace Roommates.Api.Migrations
                 {
                     table.PrimaryKey("PK_Posts", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Posts_Locations_LocationId",
-                        column: x => x.LocationId,
-                        principalSchema: "roomates",
-                        principalTable: "Locations",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
                         name: "FK_Posts_Users_CreatedByUserId",
                         column: x => x.CreatedByUserId,
                         principalSchema: "roomates",
@@ -146,7 +140,7 @@ namespace Roommates.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "FilesPosts",
+                name: "FilePost",
                 schema: "roomates",
                 columns: table => new
                 {
@@ -158,9 +152,9 @@ namespace Roommates.Api.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_FilesPosts", x => x.Id);
+                    table.PrimaryKey("PK_FilePost", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_FilesPosts_Posts_PostId",
+                        name: "FK_FilePost_Posts_PostId",
                         column: x => x.PostId,
                         principalSchema: "roomates",
                         principalTable: "Posts",
@@ -202,9 +196,9 @@ namespace Roommates.Api.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_FilesPosts_PostId",
+                name: "IX_FilePost_PostId",
                 schema: "roomates",
-                table: "FilesPosts",
+                table: "FilePost",
                 column: "PostId");
 
             migrationBuilder.CreateIndex(
@@ -212,12 +206,6 @@ namespace Roommates.Api.Migrations
                 schema: "roomates",
                 table: "Posts",
                 column: "CreatedByUserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Posts_LocationId",
-                schema: "roomates",
-                table: "Posts",
-                column: "LocationId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PostUser_LikedPostsId",
@@ -233,11 +221,15 @@ namespace Roommates.Api.Migrations
                 schema: "roomates");
 
             migrationBuilder.DropTable(
+                name: "FilePost",
+                schema: "roomates");
+
+            migrationBuilder.DropTable(
                 name: "Files",
                 schema: "roomates");
 
             migrationBuilder.DropTable(
-                name: "FilesPosts",
+                name: "Locations",
                 schema: "roomates");
 
             migrationBuilder.DropTable(
@@ -246,10 +238,6 @@ namespace Roommates.Api.Migrations
 
             migrationBuilder.DropTable(
                 name: "Posts",
-                schema: "roomates");
-
-            migrationBuilder.DropTable(
-                name: "Locations",
                 schema: "roomates");
 
             migrationBuilder.DropTable(

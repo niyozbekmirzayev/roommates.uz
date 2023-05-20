@@ -6,7 +6,7 @@ using File = Roommates.Infrastructure.Models.File;
 
 namespace Roommates.Infrastructure.Models
 {
-    public class FilesPosts : BaseModel
+    public class FilePost : BaseModel
     {
         [ForeignKey(nameof(Post))]
         public Guid PostId { get; set; }

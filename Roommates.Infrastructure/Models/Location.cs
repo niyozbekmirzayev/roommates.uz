@@ -6,6 +6,7 @@ using Roommates.Infrastructure.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,5 +23,15 @@ namespace Roommates.Infrastructure.Models
 
         [Required]
         public double Longitude { get; set; }
+
+        [Required]
+        [ForeignKey(nameof(AuthorUser))]
+        public Guid AuthorUserId { get; set; }
+
+        #region ForeignKeys
+        [NotMapped]
+        public User AuthorUser { get; set; }
+
+        #endregion
     }
 }

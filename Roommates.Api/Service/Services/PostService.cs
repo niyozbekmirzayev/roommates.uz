@@ -3,6 +3,7 @@ using Roommates.Api.Data.IRepositories;
 using Roommates.Api.Helpers;
 using Roommates.Api.Service.Interfaces;
 using Roommates.Api.Service.ViewModels.PostService;
+using Roommates.Infrastructure.Enums;
 using Roommates.Infrastructure.Models;
 using Roommates.Infrastructure.Response;
 
@@ -29,10 +30,33 @@ namespace Roommates.Api.Service.Services
 
             var currentUserId = WebHelper.GetUserId(httpContextAccessor.HttpContext);
 
+            var newLocation = mapper.Map<Location>(viewModel.Location);
+            newLocation.AuthorUserId = currentUserId;
+            newLocation = await unitOfWorkRepository.LocationRepository.AddAsync(newLocation);
+
             var newPost = mapper.Map<Post>(viewModel);
             newPost.CreatedByUserId = currentUserId;
+            newPost.LocationId = newLocation.Id;
 
             newPost = await postRepository.AddAsync(newPost);
+
+            // Saving AppartmentViewFiles
+            if (viewModel.AppartmentViewFiles != null && viewModel.AppartmentViewFiles.Any(l => l.ActionType == ActionType.Create))
+            {
+                var filesIds = viewModel.AppartmentViewFiles.Where(l => l.ActionType == ActionType.Create).Select(l => l.FileId);
+                var files = unitOfWorkRepository.FileRepository.GetAll().Where(l => filesIds.Contains(l.Id));
+
+                foreach (var file in files)
+                {
+                    var newFilePost = new FilePost()
+                    {
+                        FileId = file.Id,
+                        PostId = newPost.Id,
+                    };
+
+                    await unitOfWorkRepository.FilePostRepository.AddAsync(newFilePost);
+                }
+            }
 
             if (await postRepository.SaveChangesAsync() > 0)
             {
