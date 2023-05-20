@@ -114,7 +114,7 @@ namespace Roommates.Test
             // Assert
             Assert.Equal(ResponseCodes.SUCCESS_ADD_DATA, response.ResponseCode);
 
-            var addedUser = userRepository.Get(Guid.Parse(response.Data.ToString()));
+            var addedUser = userRepository.GetAsync(Guid.Parse(response.Data.ToString()));
             Assert.NotNull(addedUser);
         }
 

@@ -21,7 +21,8 @@ namespace Roommates.Infrastructure.Models
         public string Description { get; set; }
 
         [Required]
-        public Location Location { get; set; }
+        [ForeignKey(nameof(Location))]
+        public Guid LocationId { get; set; }
 
         public string? Address { get; set; }
 
@@ -60,7 +61,10 @@ namespace Roommates.Infrastructure.Models
 
         public List<User> LikedByUsers { get; set; }
 
-        public List<FilesPosts> AppartmentViewFiles { get; set; }
+        public List<FilePost> AppartmentViewFiles { get; set; }
+
+        [NotMapped]
+        public Location Location { get; set; }
 
         #endregion
     }

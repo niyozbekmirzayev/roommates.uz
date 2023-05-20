@@ -60,9 +60,11 @@ namespace Roommates.Api
             builder.Services.AddScoped<ILocationRepository, LocationRepository>();
             builder.Services.AddScoped<IFileRepository, FileRepository>();
             builder.Services.AddScoped<IEmailRepository, EmailRepository>();
+            builder.Services.AddScoped<IFilePostRepository, FilePostRepository>();
             builder.Services.AddScoped<IIdentiyService, IdentityService>();
             builder.Services.AddScoped<IEmailService, EmailService>();
             builder.Services.AddScoped<IFileService, FileService>();
+            builder.Services.AddScoped<IPostService, PostService>();
 
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddTransient<Microsoft.Extensions.Logging.ILogger>(s => s.GetRequiredService<ILogger<Program>>());

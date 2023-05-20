@@ -145,7 +145,7 @@ namespace Roommates.Api.Service.Services
 
             Guid currentUserId = WebHelper.GetUserId(httpContextAccessor.HttpContext);
 
-            var currentUser = await unitOfWorkRepository.UserRepository.Get(currentUserId);
+            var currentUser = await unitOfWorkRepository.UserRepository.GetAsync(currentUserId);
             if (currentUser == null)
             {
                 response.ResponseCode = ResponseCodes.ERROR_NOT_FOUND_DATA;
@@ -253,7 +253,7 @@ namespace Roommates.Api.Service.Services
 
             Guid currentUserId = WebHelper.GetUserId(httpContextAccessor.HttpContext);
 
-            var currentUser = await unitOfWorkRepository.UserRepository.Get(currentUserId);
+            var currentUser = await unitOfWorkRepository.UserRepository.GetAsync(currentUserId);
             if (currentUser == null)
             {
                 response.ResponseCode = ResponseCodes.ERROR_NOT_FOUND_DATA;

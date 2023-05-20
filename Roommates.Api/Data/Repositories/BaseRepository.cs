@@ -46,7 +46,7 @@ namespace Roommates.Api.Data.Repositories
             return Entities;
         }
 
-        public async Task<TEntity> Get(Guid id, bool includeRemovedEntities = false)
+        public async Task<TEntity> GetAsync(Guid id, bool includeRemovedEntities = false)
         {
             var entity = await Entities.FindAsync(id);
 

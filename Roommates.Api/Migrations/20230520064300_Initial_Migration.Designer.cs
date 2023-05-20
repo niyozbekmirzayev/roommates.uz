@@ -12,7 +12,7 @@ using Roommates.Api.Data;
 namespace Roommates.Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230519140934_Initial_Migration")]
+    [Migration("20230520064300_Initial_Migration")]
     partial class Initial_Migration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -118,7 +118,7 @@ namespace Roommates.Api.Migrations
                     b.ToTable("Files", "roomates");
                 });
 
-            modelBuilder.Entity("Roommates.Infrastructure.Models.FilesPosts", b =>
+            modelBuilder.Entity("Roommates.Infrastructure.Models.FilePost", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -140,13 +140,16 @@ namespace Roommates.Api.Migrations
 
                     b.HasIndex("PostId");
 
-                    b.ToTable("FilesPosts", "roomates");
+                    b.ToTable("FilePost", "roomates");
                 });
 
             modelBuilder.Entity("Roommates.Infrastructure.Models.Location", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AuthorUserId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedDate")
@@ -229,8 +232,6 @@ namespace Roommates.Api.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CreatedByUserId");
-
-                    b.HasIndex("LocationId");
 
                     b.ToTable("Posts", "roomates");
                 });
@@ -320,7 +321,7 @@ namespace Roommates.Api.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Roommates.Infrastructure.Models.FilesPosts", b =>
+            modelBuilder.Entity("Roommates.Infrastructure.Models.FilePost", b =>
                 {
                     b.HasOne("Roommates.Infrastructure.Models.Post", null)
                         .WithMany("AppartmentViewFiles")
@@ -337,15 +338,7 @@ namespace Roommates.Api.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Roommates.Infrastructure.Models.Location", "Location")
-                        .WithMany()
-                        .HasForeignKey("LocationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("CreatedByUser");
-
-                    b.Navigation("Location");
                 });
 
             modelBuilder.Entity("Roommates.Infrastructure.Models.Post", b =>

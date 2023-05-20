@@ -9,6 +9,7 @@ namespace Roommates.Api.Data.Repositories
             IPostRepository postRepository,
             IUserRepository userRepository,
             IEmailRepository emailRepository,
+            IFilePostRepository filePostRepository,
             ILocationRepository locationRepository)
         {
             FileRepository = fileRepository;
@@ -16,7 +17,7 @@ namespace Roommates.Api.Data.Repositories
             LocationRepository = locationRepository;
             UserRepository = userRepository;
             EmailRepository = emailRepository;
-
+            FilePostRepository = filePostRepository;
         }
 
         public IFileRepository FileRepository { get; }
@@ -24,5 +25,7 @@ namespace Roommates.Api.Data.Repositories
         public IPostRepository PostRepository { get; }
         public IUserRepository UserRepository { get; }
         public IEmailRepository EmailRepository { get; }
+
+        public IFilePostRepository FilePostRepository { get; }
     }
 }

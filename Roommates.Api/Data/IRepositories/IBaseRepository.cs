@@ -8,7 +8,7 @@ namespace Roommates.Api.Data.IRepositories
         DbSet<TEntity> Entities { get; }
 
         IQueryable<TEntity> GetAll(bool includeRemovedEntities = false);
-        Task<TEntity> Get(Guid id, bool includeRemovedEntities = false);
+        Task<TEntity> GetAsync(Guid id, bool includeRemovedEntities = false);
 
         Task AddRangeAsync(IEnumerable<TEntity> entities);
         Task<TEntity> AddAsync(TEntity entity);
