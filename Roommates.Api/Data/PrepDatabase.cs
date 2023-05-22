@@ -36,7 +36,7 @@ namespace Roommates.Api.Data
                              IsForSelling = false,
                              Description = "Good and peaceful place",
                              PreferedUserGender = Gender.NotSpecified,
-                             ViewedTime = 1,
+                             ViewedCount = 1,
                              CurrencyType = CurrencyType.USD,
                              Price = 2000,
                              PricePeriodType = PricePeriodType.Monthly,
@@ -82,7 +82,6 @@ namespace Roommates.Api.Data
                             EmailVerifiedDate = DateTime.UtcNow,
                             Password = "password".ToSHA256(),
                             PhoneNumberVerifiedDate = null,
-                            LikedPosts = posts,
                             EmailVerifications = new List<Email>
                             {
                                 emails.First(l => l.EmailAddress == "clearadms@gmail.com")
@@ -99,7 +98,6 @@ namespace Roommates.Api.Data
                             EmailVerifiedDate = DateTime.UtcNow,
                             PhoneNumberVerifiedDate = DateTime.UtcNow,
                             Password = "password".ToSHA256(),
-                            OwnPosts = posts,
                             EmailVerifications = new List<Email>
                             {
                                 emails.First(l => l.EmailAddress == "johndoe@gmail.com")

@@ -36,7 +36,7 @@ namespace Roommates.Infrastructure.Models
         public bool IsForSelling { get; set; } = false;
 
         [Required]
-        public long ViewedTime { get; set; } = 0;
+        public long ViewedCount { get; set; } = 0;
 
         [Required]
         public Gender PreferedUserGender { get; set; } = Gender.NotSpecified;
@@ -58,8 +58,6 @@ namespace Roommates.Infrastructure.Models
 
         [NotMapped]
         public User CreatedByUser { get; set; }
-
-        public List<User> LikedByUsers { get; set; }
 
         public List<FilePost> AppartmentViewFiles { get; set; }
 

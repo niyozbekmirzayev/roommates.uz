@@ -16,14 +16,6 @@ namespace Roommates.Api.Data
         {
             modelBuilder.HasDefaultSchema(SCHEMA_NAME);
 
-            modelBuilder.Entity<Post>()
-                .HasMany(e => e.LikedByUsers)
-                .WithMany(e => e.LikedPosts);
-
-            modelBuilder.Entity<User>()
-                .HasMany(e => e.OwnPosts)
-                .WithOne(e => e.CreatedByUser);
-
             modelBuilder.Entity<User>()
                 .HasMany(e => e.EmailVerifications)
                 .WithOne(e => e.User);
@@ -34,5 +26,6 @@ namespace Roommates.Api.Data
         public DbSet<Location> Locations { get; set; }
         public DbSet<File> Files { get; set; }
         public DbSet<Email> Emails { get; set; }
+        public DbSet<UserPost> UserPosts { get; set; }
     }
 }
