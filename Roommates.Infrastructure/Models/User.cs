@@ -9,7 +9,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using File = Roommates.Infrastructure.Models.File;
 
 namespace Roommates.Infrastructure.Models
-{
+{  
     public class User : BaseModel, IPersistentEntity
     {
         [Required]
