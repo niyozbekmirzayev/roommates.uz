@@ -24,6 +24,9 @@ namespace Roommates.Api
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
 
+
+            builder.WebHost.UseUrls("http://0.0.0.0:5259", "https://0.0.0.0:7078");
+
             #region Swagger
             builder.Services.AddSwaggerGen(c =>
             {

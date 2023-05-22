@@ -35,17 +35,15 @@ namespace Roommates.Infrastructure.Models
 
         public string? Bio { get; set; }
 
+        [ForeignKey(nameof(ProfilePicture))]
+        public Guid? ProfilePictureFileId { get; set; }
+
         [Required]
         public EntityState EntityState { get; set; } = EntityState.Active;
 
         #region ForeignKeys
 
-        [ForeignKey(nameof(ProfilePicture))]
-        public Guid? ProfilePictureFileId { get; set; }
-
-        public List<Post> LikedPosts { get; set; }
-
-        public List<Post> OwnPosts { get; set; }
+        public List<UserPost> RelatedPosts { get; set; }
 
         public List<Email> EmailVerifications { get; set; }
 

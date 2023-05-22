@@ -8,6 +8,8 @@ namespace Roommates.Infrastructure.Models
 {
     public class FilePost : BaseModel
     {
+        public short Sequence { get; set; }
+
         [ForeignKey(nameof(Post))]
         public Guid PostId { get; set; }
 
