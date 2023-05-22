@@ -3,7 +3,7 @@ using Roommates;
 using Roommates.Infrastructure.Base;
 using Roommates.Infrastructure.Enums;
 using Roommates.Infrastructure.Models;
-using System;
+using System;  
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
