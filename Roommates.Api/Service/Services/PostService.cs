@@ -46,18 +46,25 @@ namespace Roommates.Api.Service.Services
             // Saving AppartmentViewFiles
             if (viewModel.AppartmentViewFiles != null && viewModel.AppartmentViewFiles.Any(l => l.ActionType == ActionType.Create))
             {
-                var filesIds = viewModel.AppartmentViewFiles.Where(l => l.ActionType == ActionType.Create).Select(l => l.FileId);
-                var files = unitOfWorkRepository.FileRepository.GetAll().Where(l => filesIds.Contains(l.Id));
+                var filesViews = viewModel.AppartmentViewFiles.Where(l => l.ActionType == ActionType.Create).OrderBy(l => l.Sequence).ToList();
+                var files = unitOfWorkRepository.FileRepository.GetAll().Where(l => filesViews.Select(l => l.FileId).Contains(l.Id));
 
-                foreach (var file in files)
+                short sequence = 1;
+                foreach(var fileView in filesViews) 
                 {
-                    var newFilePost = new FilePost()
+                    var file = files.FirstOrDefault(l => l.Id == fileView.FileId);
+                    if(file != null) 
                     {
-                        FileId = file.Id,
-                        PostId = newPost.Id,
-                    };
+                        var newFilePost = new FilePost()
+                        {
+                            FileId = file.Id,
+                            PostId = newPost.Id,
+                            Sequence = sequence
+                        };
 
-                    await unitOfWorkRepository.FilePostRepository.AddAsync(newFilePost);
+                        await unitOfWorkRepository.FilePostRepository.AddAsync(newFilePost);
+                        sequence++;
+                    }
                 }
             }
 
