@@ -10,5 +10,8 @@ namespace Roommates.Api.Service.ViewModels
 
         [Required]
         public ActionType ActionType { get; set; }
+
+        [Required]
+        public short Sequence { get; set; }
     }
 }
