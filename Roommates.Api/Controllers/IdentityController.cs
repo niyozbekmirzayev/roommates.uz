@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Roommates.Api.Helpers;
 using Roommates.Api.Service.Interfaces;
-using Roommates.Api.Service.ViewModels.IdentityService;
+using Roommates.Api.Service.ViewModels;
 
 namespace Roommates.Api.Controllers
 {

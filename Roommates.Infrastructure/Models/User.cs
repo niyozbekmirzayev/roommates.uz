@@ -47,8 +47,7 @@ namespace Roommates.Infrastructure.Models
 
         public List<Email> EmailVerifications { get; set; }
 
-        [NotMapped]
-        public File? ProfilePicture { get; set; }
+        public virtual File? ProfilePicture { get; set; }
         public DateTime? InactivatedDate { get; set; }
 
         #endregion

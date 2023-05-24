@@ -1,9 +1,7 @@
-﻿using Roommates.Api.Service.ViewModels.Common;
-using Roommates.Api.Service.ViewModels.FileService;
-using Roommates.Infrastructure.Enums;
+﻿using Roommates.Infrastructure.Enums;
 using System.ComponentModel.DataAnnotations;
 
-namespace Roommates.Api.Service.ViewModels.PostService
+namespace Roommates.Api.Service.ViewModels
 {
     public class CreatePostViewModel
     {

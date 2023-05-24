@@ -7,6 +7,7 @@
         public const string SUCCESS_DELETE_DATA = "success-delete-data";
         public const string SUCCESS_GENERATE_TOKEN = "success-generate-token";
         public const string SUCCESS_UPDATE_DATA = "success-update-data";
+        public const string SUCCESS_GET_DATA = "success-get-data";
 
         public const string ERROR_UNEXPECTED_EXCEPTION = "unexpected-error-exception";
         public const string ERROR_SAVE_DATA = "error-save-data";

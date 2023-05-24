@@ -30,10 +30,9 @@ namespace Roommates.Infrastructure.Models
 
         [Required]
         public EmailType Type { get; set; }
-
+          
         public DateTime? VerifiedDate { get; set; }
 
-        [NotMapped]
-        public User User { get; set; }
+        public virtual User User { get; set; }
     }
 }

@@ -29,8 +29,8 @@ namespace Roommates.Infrastructure.Models
         public Guid AuthorUserId { get; set; }
 
         #region ForeignKeys
-        [NotMapped]
-        public User AuthorUser { get; set; }
+     
+        public virtual User AuthorUser { get; set; }
 
         #endregion
     }

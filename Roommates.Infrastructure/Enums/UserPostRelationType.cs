@@ -10,6 +10,7 @@ namespace Roommates.Infrastructure.Enums
     {
         Liked,
         Reported,
-        Viewed
+        Viewed,
+        Disliked
     }
 }

@@ -64,6 +64,7 @@ namespace Roommates.Api
             builder.Services.AddScoped<IFileRepository, FileRepository>();
             builder.Services.AddScoped<IEmailRepository, EmailRepository>();
             builder.Services.AddScoped<IFilePostRepository, FilePostRepository>();
+            builder.Services.AddScoped<IUserPostRepository, UserPostRepository>();
             builder.Services.AddScoped<IIdentiyService, IdentityService>();
             builder.Services.AddScoped<IEmailService, EmailService>();
             builder.Services.AddScoped<IFileService, FileService>();
