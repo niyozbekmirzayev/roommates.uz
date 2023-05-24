@@ -1,7 +1,7 @@
 ﻿using Roommates.Infrastructure.Enums;
 using System.ComponentModel.DataAnnotations;
 
-namespace Roommates.Api.Service.ViewModels.FileService
+namespace Roommates.Api.Service.ViewModels
 {
     public class SaveFileViewModel
     {

@@ -4,7 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using Roommates.Api.Data.IRepositories;
 using Roommates.Api.Helpers;
 using Roommates.Api.Service.Interfaces;
-using Roommates.Api.Service.ViewModels.IdentityService;
+using Roommates.Api.Service.ViewModels;
 using Roommates.Infrastructure.Enums;
 using Roommates.Infrastructure.Models;
 using Roommates.Infrastructure.Response;

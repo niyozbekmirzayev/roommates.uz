@@ -33,8 +33,7 @@ namespace Roommates.Infrastructure.Models
 
         #region ForeignKeys
 
-        [NotMapped]
-        public User AuthorUser { get; set; }
+        public virtual User AuthorUser { get; set; }
 
         #endregion
     }

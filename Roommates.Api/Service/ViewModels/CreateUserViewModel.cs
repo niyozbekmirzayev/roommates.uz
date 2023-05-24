@@ -1,7 +1,7 @@
 ﻿using Roommates.Infrastructure.Enums;
 using System.ComponentModel.DataAnnotations;
 
-namespace Roommates.Api.Service.ViewModels.IdentityService
+namespace Roommates.Api.Service.ViewModels
 {
     public class CreateUserViewModel
     {

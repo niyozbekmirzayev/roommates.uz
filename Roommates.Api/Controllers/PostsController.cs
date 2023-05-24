@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Roommates.Api.Helpers;
 using Roommates.Api.Service.Interfaces;
-using Roommates.Api.Service.ViewModels.PostService;
+using Roommates.Api.Service.ViewModels;
 
 namespace Roommates.Api.Controllers
 {
@@ -22,6 +22,18 @@ namespace Roommates.Api.Controllers
         public async Task<IActionResult> CreatePost(CreatePostViewModel viewModel)
         {
             return WebHelper.SentResponseWithStatusCode(this, await postService.CreatePostAsync(viewModel));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ViewPost(Guid postId) 
+        {
+            return WebHelper.SentResponseWithStatusCode(this, await postService.ViewPostAsync(postId));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> LikePost(Guid postId)
+        {
+            return WebHelper.SentResponseWithStatusCode(this, await postService.LikePostAsync(postId));
         }
     }
 }

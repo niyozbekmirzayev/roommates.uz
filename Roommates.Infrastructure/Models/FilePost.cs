@@ -18,11 +18,10 @@ namespace Roommates.Infrastructure.Models
 
         #region ForeignKeys
 
-        [NotMapped]
-        public Post Post { get; set; }
+       
+        public virtual Post Post { get; set; }
 
-        [NotMapped]
-        public File File { get; set; }
+        public virtual File File { get; set; }
 
         #endregion
     }

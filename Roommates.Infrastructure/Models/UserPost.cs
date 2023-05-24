@@ -2,6 +2,7 @@
 using Roommates.Infrastructure.Enums;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Reflection.Metadata.Ecma335;
@@ -18,16 +19,14 @@ namespace Roommates.Infrastructure.Models
         [ForeignKey(nameof(Post))]
         public Guid PostId { get; set; }
 
+        [Required]
         public UserPostRelationType UserPostRelationType { get; set; }
-
 
         #region ForeignKeys
 
-        [NotMapped]
-        public User User { get; set; }
+        public virtual User User { get; set; }
 
-        [NotMapped]
-        public Post Post { get; set;  } 
+        public virtual Post Post { get; set;  } 
 
         #endregion
     }

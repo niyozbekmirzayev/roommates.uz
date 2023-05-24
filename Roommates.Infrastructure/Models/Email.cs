@@ -33,7 +33,6 @@ namespace Roommates.Infrastructure.Models
           
         public DateTime? VerifiedDate { get; set; }
 
-        [NotMapped]
-        public User User { get; set; }
+        public virtual User User { get; set; }
     }
 }

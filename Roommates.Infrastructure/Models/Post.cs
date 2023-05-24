@@ -47,6 +47,7 @@ namespace Roommates.Infrastructure.Models
         public CurrencyType CurrencyType { get; set; }
 
         [Required]
+        [ForeignKey(nameof(CreatedByUser))]
         public Guid CreatedByUserId { get; set; }
 
         [Required]
@@ -56,13 +57,11 @@ namespace Roommates.Infrastructure.Models
 
         #region ForeignKeys
 
-        [NotMapped]
-        public User CreatedByUser { get; set; }
+        public virtual User CreatedByUser { get; set; }
 
         public List<FilePost> AppartmentViewFiles { get; set; }
 
-        [NotMapped]
-        public Location Location { get; set; }
+        public virtual Location Location { get; set; }
 
         #endregion
     }
