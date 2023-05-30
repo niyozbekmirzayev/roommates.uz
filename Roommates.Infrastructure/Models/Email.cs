@@ -1,4 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Roommates;
 using Roommates.Infrastructure.Base;
 using Roommates.Infrastructure.Enums;
@@ -29,8 +31,9 @@ namespace Roommates.Infrastructure.Models
         public DateTime ExpirationDate = DateTime.UtcNow.AddHours(1);
 
         [Required]
+        [Column(TypeName = "varchar(24)")]
         public EmailType Type { get; set; }
-          
+
         public DateTime? VerifiedDate { get; set; }
 
         public virtual User User { get; set; }

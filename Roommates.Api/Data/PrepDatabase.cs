@@ -27,29 +27,6 @@ namespace Roommates.Api.Data
                 {
                     Console.WriteLine("Seeding database");
 
-                    var posts = new List<Post>()
-                    {
-                        new Post()
-                        {
-                             Title = "Appartment with 2 rooms for renting",
-                             Address = "New York, Wall Street, 54",
-                             IsForSelling = false,
-                             Description = "Good and peaceful place",
-                             PreferedUserGender = Gender.NotSpecified,
-                             ViewedCount = 1,
-                             CurrencyType = CurrencyType.USD,
-                             Price = 2000,
-                             PricePeriodType = PricePeriodType.Monthly,
-                             RoomsCount = 2,
-                             Location = new Location
-                             {
-                                 Name = "New York, Wall Street, 54",
-                                 Latitude = 38.8951,
-                                 Longitude = -77.0364
-                             },
-                        }
-                    };
-
                     var emails = new List<Email>
                     {
                         new Email()
@@ -73,9 +50,10 @@ namespace Roommates.Api.Data
                     {
                         new User()
                         {
+                            Id = Guid.Parse("3fc263c0-9093-4848-ac96-c8a828345dee"),
                             FirstName = "Clear",
                             LastName = "Adams",
-                            Gender = Gender.Female,
+                            ClientType = ClientType.Female,
                             Birthdate = DateTime.UtcNow,
                             PhoneNumber = "7857485748",
                             EmailAddress = "clearadms@gmail.com",
@@ -89,10 +67,11 @@ namespace Roommates.Api.Data
                         },
                         new User()
                         {
+                            Id = Guid.Parse("82ed2037-6217-452d-832a-78adcb25a812"),
                             FirstName = "John",
                             LastName = "Doe",
                             Birthdate = DateTime.UtcNow,
-                            Gender = Gender.Male,
+                            ClientType = ClientType.Male,
                             PhoneNumber = "7857353448",
                             EmailAddress = "johndoe@gmail.com",
                             EmailVerifiedDate = DateTime.UtcNow,
@@ -101,12 +80,52 @@ namespace Roommates.Api.Data
                             EmailVerifications = new List<Email>
                             {
                                 emails.First(l => l.EmailAddress == "johndoe@gmail.com")
-                            }
+                            },
                         },
 
                     };
 
+                    var posts = new List<Post>()
+                    {
+                        new Post()
+                        {
+                             Id = Guid.Parse("d45b9bee-559b-4de5-a8e8-ae1608eb7133"),
+                             StaticFeatures = new StaticFeatures()
+                             {
+                                IsForSelling = false,
+                                PreferedClientType = ClientType.All,
+                                CurrencyType = CurrencyType.USD,
+                                Price = 2000,
+                                PricePeriodType = PricePeriodType.Monthly,
+                                RoomsCount = 2,
+                             },
+                             Location = new Location
+                             {
+                                Name = "New York, Wall Street, 54",
+                                Latitude = 38.8951,
+                                Longitude = -77.0364,
+                                AuthorUserId = users.First().Id
+                             },
+                             Title = "Appartment with 2 rooms for renting",
+                             Description = "Good and peaceful place",
+                             ViewedCount = 1,
+                             CreatedByUserId = users.First().Id,
+                        }
+                    };
+
+                    var usersPosts = new List<UserPost>()
+                    {
+                        new UserPost()
+                        {
+                            UserId = users.Last().Id,
+                            UserPostRelationType = UserPostRelationType.Viewed,
+                            PostId = posts.First().Id,
+                        }
+                    };
+
+                    dbContext.Posts.AddRange(posts);
                     dbContext.Users.AddRange(users);
+                    dbContext.UserPosts.AddRange(usersPosts);
 
                     dbContext.SaveChanges();
                 }

@@ -1,8 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using Roommates;
 using Roommates.Infrastructure.Base;
-using Roommates.Infrastructure.Models;
+using Roommates.Infrastructure.Enums;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -13,24 +12,26 @@ using System.Threading.Tasks;
 
 namespace Roommates.Infrastructure.Models
 {
-    public class Location : BaseModel
+    public class DynamicFeature : BaseModel
     {
+        [Required]
+        [ForeignKey(nameof(Post))]
+        public Guid PostId { get; set; }
+
         [Required]
         public string Name { get; set; }
 
         [Required]
-        public double Latitude { get; set; }
+        [Column(TypeName = "varchar(24)")]
+        public DynamicFeatureType DynamicFeatureType { get; set; }
 
-        [Required]
-        public double Longitude { get; set; }
+        public long? Count { get; set; }
 
-        [Required]
-        [ForeignKey(nameof(AuthorUser))]
-        public Guid AuthorUserId { get; set; }
+        public bool? IsExist { get; set; }
 
         #region ForeignKeys
 
-        public virtual User AuthorUser { get; set; }
+        public virtual Post Post { get; set; }
 
         #endregion
     }

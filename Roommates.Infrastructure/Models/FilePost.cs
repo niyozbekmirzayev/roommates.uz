@@ -18,7 +18,7 @@ namespace Roommates.Infrastructure.Models
 
         #region ForeignKeys
 
-       
+
         public virtual Post Post { get; set; }
 
         public virtual File File { get; set; }

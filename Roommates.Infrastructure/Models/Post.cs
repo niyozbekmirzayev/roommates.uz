@@ -15,53 +15,44 @@ namespace Roommates.Infrastructure.Models
         public string Title { get; set; }
 
         [Required]
-        PostType PostType { get; set; } = PostType.Apartment;
+        public string Description { get; set; }
 
         [Required]
-        public string Description { get; set; }
+        [Column(TypeName = "varchar(24)")]
+        PostType PostType { get; set; } = PostType.Apartment;
 
         [Required]
         [ForeignKey(nameof(Location))]
         public Guid LocationId { get; set; }
 
-        public string? Address { get; set; }
-
-        [Required]
-        public decimal Price { get; set; }
-
-        [Required]
-        public short RoomsCount { get; set; }
-
-        [Required]
-        public bool IsForSelling { get; set; } = false;
-
         [Required]
         public long ViewedCount { get; set; } = 0;
-
-        [Required]
-        public Gender PreferedUserGender { get; set; } = Gender.NotSpecified;
-
-        public PricePeriodType? PricePeriodType { get; set; }
-
-        [Required]
-        public CurrencyType CurrencyType { get; set; }
 
         [Required]
         [ForeignKey(nameof(CreatedByUser))]
         public Guid CreatedByUserId { get; set; }
 
         [Required]
+        [Column(TypeName = "varchar(24)")]
         public EntityState EntityState { get; set; } = EntityState.Active;
+
+        [Required]
+        [Column(TypeName = "varchar(24)")]
+        public PostStatus PostStatus { get; set; } = PostStatus.Active;
 
         public DateTime? InactivatedDate { get; set; }
 
         #region ForeignKeys
 
+        public List<DynamicFeature> DynamicFeatures { get; set; }
+
         public virtual User CreatedByUser { get; set; }
 
-        public List<FilePost> AppartmentViewFiles { get; set; }
+        public virtual StaticFeatures StaticFeatures { get; set; }
 
         public virtual Location Location { get; set; }
+
+        public List<FilePost> AppartmentViewFiles { get; set; }
 
         #endregion
     }

@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Converters;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Roommates;
 using Roommates.Infrastructure.Base;
 using Roommates.Infrastructure.Enums;
@@ -20,6 +21,7 @@ namespace Roommates.Infrastructure.Models
         public string? MimeType { get; set; }
 
         [Required]
+        [Column(TypeName = "varchar(24)")]
         public EntityState EntityState { get; set; } = EntityState.Active;
 
         public DateTime? InactivatedDate { get; set; }

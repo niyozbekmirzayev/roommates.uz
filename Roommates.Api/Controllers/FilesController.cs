@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Roommates.Api.Helpers;
-using Roommates.Api.Service.Interfaces;
+using Roommates.Api.Interfaces;
 
 namespace Roommates.Api.Controllers
 {

@@ -2,13 +2,14 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json.Converters;
 using Roommates.Api.Data;
 using Roommates.Api.Data.IRepositories;
 using Roommates.Api.Data.Repositories;
 using Roommates.Api.Helpers;
-using Roommates.Api.Service.Interfaces;
-using Roommates.Api.Service.Mapping;
-using Roommates.Api.Service.Services;
+using Roommates.Api.Interfaces;
+using Roommates.Api.Mapping;
+using Roommates.Api.Services;
 using Serilog;
 using System.Text;
 
@@ -75,6 +76,9 @@ namespace Roommates.Api
             builder.Services.AddScoped<PrepDatabase>();
             builder.Services.AddAutoMapper(typeof(MappingConfig));
             builder.Services.AddDbContext<ApplicationDbContext>(o => o.UseNpgsql(builder.Configuration.GetConnectionString("Postgre")));
+
+            builder.Services.AddControllers().AddNewtonsoftJson(opts => opts
+                    .SerializerSettings.Converters.Add(new StringEnumConverter()));
 
             #region JWT Authentication
             var key = Encoding.UTF8.GetBytes(builder.Configuration.GetSection("JWT:Key").Value);

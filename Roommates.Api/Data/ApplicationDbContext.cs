@@ -19,6 +19,8 @@ namespace Roommates.Api.Data
             modelBuilder.Entity<User>()
                 .HasMany(e => e.EmailVerifications)
                 .WithOne(e => e.User);
+
+            base.OnModelCreating(modelBuilder);
         }
 
         public DbSet<User> Users { get; set; }
@@ -27,5 +29,7 @@ namespace Roommates.Api.Data
         public DbSet<File> Files { get; set; }
         public DbSet<Email> Emails { get; set; }
         public DbSet<UserPost> UserPosts { get; set; }
+        public DbSet<DynamicFeature> DynamicFeatures { get; set; }
+        public DbSet<StaticFeatures> StaticFeatures { get; set; }
     }
 }
