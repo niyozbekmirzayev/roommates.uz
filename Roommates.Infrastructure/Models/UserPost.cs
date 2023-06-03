@@ -1,4 +1,6 @@
-﻿using Roommates.Infrastructure.Base;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Roommates.Infrastructure.Base;
 using Roommates.Infrastructure.Enums;
 using System;
 using System.Collections.Generic;
@@ -20,13 +22,14 @@ namespace Roommates.Infrastructure.Models
         public Guid PostId { get; set; }
 
         [Required]
+        [Column(TypeName = "varchar(24)")]
         public UserPostRelationType UserPostRelationType { get; set; }
 
         #region ForeignKeys
 
         public virtual User User { get; set; }
 
-        public virtual Post Post { get; set;  } 
+        public virtual Post Post { get; set; }
 
         #endregion
     }

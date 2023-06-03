@@ -9,14 +9,15 @@ using System.ComponentModel.DataAnnotations.Schema;
 using File = Roommates.Infrastructure.Models.File;
 
 namespace Roommates.Infrastructure.Models
-{  
-    public class User : BaseModel, IPersistentEntity
+{
+    public class User : BaseModel, IEntityPersistent
     {
         [Required]
         public string FirstName { get; set; }
 
         public string? LastName { get; set; }
 
+        [Column(TypeName = "varchar(24)")]
         public Gender? Gender { get; set; }
 
         public DateTime? Birthdate { get; set; }
@@ -39,6 +40,7 @@ namespace Roommates.Infrastructure.Models
         public Guid? ProfilePictureFileId { get; set; }
 
         [Required]
+        [Column(TypeName = "varchar(24)")]
         public EntityState EntityState { get; set; } = EntityState.Active;
 
         #region ForeignKeys
@@ -48,6 +50,7 @@ namespace Roommates.Infrastructure.Models
         public List<Email> EmailVerifications { get; set; }
 
         public virtual File? ProfilePicture { get; set; }
+
         public DateTime? InactivatedDate { get; set; }
 
         #endregion

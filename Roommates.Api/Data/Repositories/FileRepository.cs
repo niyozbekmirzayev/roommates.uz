@@ -1,4 +1,5 @@
 ﻿using Roommates.Api.Data.IRepositories;
+using Roommates.Api.Data.Repositories.Base;
 using File = Roommates.Infrastructure.Models.File;
 
 namespace Roommates.Api.Data.Repositories

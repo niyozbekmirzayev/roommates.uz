@@ -6,6 +6,7 @@ namespace Roommates.Api.Data
 {
     public class PrepDatabase
     {
+        public const string SCHEMA_NAME = "roomates";
         public readonly IConfiguration configuration;
         public readonly ApplicationDbContext dbContext;
 
@@ -14,6 +15,7 @@ namespace Roommates.Api.Data
             this.configuration = configuration;
             this.dbContext = dbContext;
 
+            //CreateScheme(SCHEMA_NAME);
             SeedData();
         }
 
@@ -26,29 +28,6 @@ namespace Roommates.Api.Data
                 if (addSeedData && !dbContext.Users.Any())
                 {
                     Console.WriteLine("Seeding database");
-
-                    var posts = new List<Post>()
-                    {
-                        new Post()
-                        {
-                             Title = "Appartment with 2 rooms for renting",
-                             Address = "New York, Wall Street, 54",
-                             IsForSelling = false,
-                             Description = "Good and peaceful place",
-                             PreferedUserGender = Gender.NotSpecified,
-                             ViewedCount = 1,
-                             CurrencyType = CurrencyType.USD,
-                             Price = 2000,
-                             PricePeriodType = PricePeriodType.Monthly,
-                             RoomsCount = 2,
-                             Location = new Location
-                             {
-                                 Name = "New York, Wall Street, 54",
-                                 Latitude = 38.8951,
-                                 Longitude = -77.0364
-                             },
-                        }
-                    };
 
                     var emails = new List<Email>
                     {
@@ -73,6 +52,7 @@ namespace Roommates.Api.Data
                     {
                         new User()
                         {
+                            Id = Guid.Parse("3fc263c0-9093-4848-ac96-c8a828345dee"),
                             FirstName = "Clear",
                             LastName = "Adams",
                             Gender = Gender.Female,
@@ -89,6 +69,7 @@ namespace Roommates.Api.Data
                         },
                         new User()
                         {
+                            Id = Guid.Parse("82ed2037-6217-452d-832a-78adcb25a812"),
                             FirstName = "John",
                             LastName = "Doe",
                             Birthdate = DateTime.UtcNow,
@@ -101,16 +82,92 @@ namespace Roommates.Api.Data
                             EmailVerifications = new List<Email>
                             {
                                 emails.First(l => l.EmailAddress == "johndoe@gmail.com")
-                            }
+                            },
                         },
 
                     };
 
+                    var posts = new List<Post>()
+                    {
+                        new Post()
+                        {
+                             Id = Guid.Parse("d45b9bee-559b-4de5-a8e8-ae1608eb7133"),
+                             StaticFeatures = new StaticFeatures()
+                             {
+                                IsForSelling = false,
+                                PreferedClientType = ClientType.All,
+                                CurrencyType = CurrencyType.USD,
+                                Price = 2000,
+                                PricePeriodType = PricePeriodType.Monthly,
+                                RoomsCount = 2,
+                             },
+                             Location = new Location
+                             {
+                                Name = "New York, Wall Street, 54",
+                                Latitude = 38.8951,
+                                Longitude = -77.0364,
+                             },
+                             Title = "Appartment with 2 rooms for renting",
+                             Description = "Good and peaceful place",
+                             ViewsCount = 1,
+                             CreatedById = users.First().Id,
+                        }
+                    };
+
+                    var usersPosts = new List<UserPost>()
+                    {
+                        new UserPost()
+                        {
+                            UserId = users.Last().Id,
+                            UserPostRelationType = UserPostRelationType.Viewed,
+                            PostId = posts.First().Id,
+                        }
+                    };
+
+                    dbContext.Posts.AddRange(posts);
                     dbContext.Users.AddRange(users);
+                    dbContext.UserPosts.AddRange(usersPosts);
 
                     dbContext.SaveChanges();
                 }
             }
         }
+
+        /* public void CreateScheme(string schemaName) 
+         {
+             var schemas = GetSchemas();
+
+             bool schemaExists = schemas.Contains(schemaName);
+             if (!schemaExists) 
+             {
+                 dbContext.Database.Migrate();
+                 dbContext.SaveChanges();
+             }
+
+         }
+
+         public List<string> GetSchemas()
+         {
+             var schemas = new List<string>();
+
+             using (var connection = dbContext.Database.GetDbConnection())
+             {
+                 connection.Open();
+
+                 var command = connection.CreateCommand();
+                 command.CommandText = "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA";
+
+                 using (var reader = command.ExecuteReader())
+                 {
+                     while (reader.Read())
+                     {
+                         var schemaName = reader.GetString(0);
+                         schemas.Add(schemaName);
+                     }
+                 }
+             }
+
+             return schemas;
+         }*/
     }
 }

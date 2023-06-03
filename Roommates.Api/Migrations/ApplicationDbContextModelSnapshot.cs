@@ -23,6 +23,42 @@ namespace Roommates.Api.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Roommates.Infrastructure.Models.DynamicFeature", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<long?>("Count")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("DynamicFeatureType")
+                        .IsRequired()
+                        .HasColumnType("varchar(24)");
+
+                    b.Property<bool?>("IsExist")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("LastModifiedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("PostId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PostId");
+
+                    b.ToTable("DynamicFeatures", "roomates");
+                });
+
             modelBuilder.Entity("Roommates.Infrastructure.Models.Email", b =>
                 {
                     b.Property<Guid>("Id")
@@ -39,8 +75,9 @@ namespace Roommates.Api.Migrations
                     b.Property<DateTime?>("LastModifiedDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("Type")
-                        .HasColumnType("integer");
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("varchar(24)");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
@@ -65,20 +102,24 @@ namespace Roommates.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("AuthorUserId")
-                        .HasColumnType("uuid");
-
                     b.Property<byte[]>("Content")
                         .HasColumnType("bytea");
+
+                    b.Property<Guid>("CreatedById")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("EntityState")
-                        .HasColumnType("integer");
+                    b.Property<string>("EntityState")
+                        .IsRequired()
+                        .HasColumnType("varchar(24)");
 
                     b.Property<string>("Extension")
                         .HasColumnType("text");
+
+                    b.Property<Guid?>("InactivatedById")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime?>("InactivatedDate")
                         .HasColumnType("timestamp with time zone");
@@ -98,7 +139,7 @@ namespace Roommates.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AuthorUserId");
+                    b.HasIndex("CreatedById");
 
                     b.ToTable("Files", "roomates");
                 });
@@ -139,9 +180,6 @@ namespace Roommates.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("AuthorUserId")
-                        .HasColumnType("uuid");
-
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
 
@@ -160,8 +198,6 @@ namespace Roommates.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AuthorUserId");
-
                     b.ToTable("Locations", "roomates");
                 });
 
@@ -171,24 +207,68 @@ namespace Roommates.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Address")
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("CreatedByUserId")
+                    b.Property<Guid>("CreatedById")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("CurrencyType")
-                        .HasColumnType("integer");
-
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("EntityState")
-                        .HasColumnType("integer");
+                    b.Property<string>("EntityState")
+                        .IsRequired()
+                        .HasColumnType("varchar(24)");
+
+                    b.Property<Guid?>("InactivatedById")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("InactivatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("LastModifiedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("LocationId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("PostStatus")
+                        .IsRequired()
+                        .HasColumnType("varchar(24)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<long>("ViewsCount")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("LocationId");
+
+                    b.ToTable("Posts", "roomates");
+                });
+
+            modelBuilder.Entity("Roommates.Infrastructure.Models.StaticFeatures", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CurrencyType")
+                        .IsRequired()
+                        .HasColumnType("varchar(24)");
+
+                    b.Property<string>("EntityState")
+                        .IsRequired()
+                        .HasColumnType("varchar(24)");
 
                     b.Property<DateTime?>("InactivatedDate")
                         .HasColumnType("timestamp with time zone");
@@ -199,35 +279,28 @@ namespace Roommates.Api.Migrations
                     b.Property<DateTime?>("LastModifiedDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("LocationId")
+                    b.Property<Guid>("PostId")
                         .HasColumnType("uuid");
 
-                    b.Property<int>("PreferedUserGender")
-                        .HasColumnType("integer");
+                    b.Property<string>("PreferedClientType")
+                        .IsRequired()
+                        .HasColumnType("varchar(24)");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("numeric");
 
-                    b.Property<int?>("PricePeriodType")
-                        .HasColumnType("integer");
+                    b.Property<string>("PricePeriodType")
+                        .HasColumnType("varchar(24)");
 
                     b.Property<short>("RoomsCount")
                         .HasColumnType("smallint");
 
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<long>("ViewedCount")
-                        .HasColumnType("bigint");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedByUserId");
+                    b.HasIndex("PostId")
+                        .IsUnique();
 
-                    b.HasIndex("LocationId");
-
-                    b.ToTable("Posts", "roomates");
+                    b.ToTable("StaticFeatures", "roomates");
                 });
 
             modelBuilder.Entity("Roommates.Infrastructure.Models.User", b =>
@@ -252,15 +325,16 @@ namespace Roommates.Api.Migrations
                     b.Property<DateTime?>("EmailVerifiedDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("EntityState")
-                        .HasColumnType("integer");
+                    b.Property<string>("EntityState")
+                        .IsRequired()
+                        .HasColumnType("varchar(24)");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int?>("Gender")
-                        .HasColumnType("integer");
+                    b.Property<string>("Gender")
+                        .HasColumnType("varchar(24)");
 
                     b.Property<DateTime?>("InactivatedDate")
                         .HasColumnType("timestamp with time zone");
@@ -309,8 +383,9 @@ namespace Roommates.Api.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
-                    b.Property<int>("UserPostRelationType")
-                        .HasColumnType("integer");
+                    b.Property<string>("UserPostRelationType")
+                        .IsRequired()
+                        .HasColumnType("varchar(24)");
 
                     b.HasKey("Id");
 
@@ -319,6 +394,17 @@ namespace Roommates.Api.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("UserPosts", "roomates");
+                });
+
+            modelBuilder.Entity("Roommates.Infrastructure.Models.DynamicFeature", b =>
+                {
+                    b.HasOne("Roommates.Infrastructure.Models.Post", "Post")
+                        .WithMany("DynamicFeatures")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Post");
                 });
 
             modelBuilder.Entity("Roommates.Infrastructure.Models.Email", b =>
@@ -334,13 +420,13 @@ namespace Roommates.Api.Migrations
 
             modelBuilder.Entity("Roommates.Infrastructure.Models.File", b =>
                 {
-                    b.HasOne("Roommates.Infrastructure.Models.User", "AuthorUser")
+                    b.HasOne("Roommates.Infrastructure.Models.User", "Author")
                         .WithMany()
-                        .HasForeignKey("AuthorUserId")
+                        .HasForeignKey("CreatedById")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("AuthorUser");
+                    b.Navigation("Author");
                 });
 
             modelBuilder.Entity("Roommates.Infrastructure.Models.FilePost", b =>
@@ -362,22 +448,11 @@ namespace Roommates.Api.Migrations
                     b.Navigation("Post");
                 });
 
-            modelBuilder.Entity("Roommates.Infrastructure.Models.Location", b =>
-                {
-                    b.HasOne("Roommates.Infrastructure.Models.User", "AuthorUser")
-                        .WithMany()
-                        .HasForeignKey("AuthorUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("AuthorUser");
-                });
-
             modelBuilder.Entity("Roommates.Infrastructure.Models.Post", b =>
                 {
-                    b.HasOne("Roommates.Infrastructure.Models.User", "CreatedByUser")
+                    b.HasOne("Roommates.Infrastructure.Models.User", "Author")
                         .WithMany()
-                        .HasForeignKey("CreatedByUserId")
+                        .HasForeignKey("CreatedById")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -387,9 +462,20 @@ namespace Roommates.Api.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("CreatedByUser");
+                    b.Navigation("Author");
 
                     b.Navigation("Location");
+                });
+
+            modelBuilder.Entity("Roommates.Infrastructure.Models.StaticFeatures", b =>
+                {
+                    b.HasOne("Roommates.Infrastructure.Models.Post", "Post")
+                        .WithOne("StaticFeatures")
+                        .HasForeignKey("Roommates.Infrastructure.Models.StaticFeatures", "PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Post");
                 });
 
             modelBuilder.Entity("Roommates.Infrastructure.Models.User", b =>
@@ -423,6 +509,10 @@ namespace Roommates.Api.Migrations
             modelBuilder.Entity("Roommates.Infrastructure.Models.Post", b =>
                 {
                     b.Navigation("AppartmentViewFiles");
+
+                    b.Navigation("DynamicFeatures");
+
+                    b.Navigation("StaticFeatures");
                 });
 
             modelBuilder.Entity("Roommates.Infrastructure.Models.User", b =>

@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Roommates.Api.Helpers;
-using Roommates.Api.Service.Interfaces;
-using Roommates.Api.Service.ViewModels;
+using Roommates.Api.Interfaces;
+using Roommates.Api.ViewModels;
 
 namespace Roommates.Api.Controllers
 {
@@ -25,7 +25,7 @@ namespace Roommates.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ViewPost(Guid postId) 
+        public async Task<IActionResult> ViewPost(Guid postId)
         {
             return WebHelper.SentResponseWithStatusCode(this, await postService.ViewPostAsync(postId));
         }
