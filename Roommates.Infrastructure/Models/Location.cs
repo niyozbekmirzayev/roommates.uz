@@ -23,15 +23,5 @@ namespace Roommates.Infrastructure.Models
 
         [Required]
         public double Longitude { get; set; }
-
-        [Required]
-        [ForeignKey(nameof(AuthorUser))]
-        public Guid AuthorUserId { get; set; }
-
-        #region ForeignKeys
-
-        public virtual User AuthorUser { get; set; }
-
-        #endregion
     }
 }

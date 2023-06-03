@@ -9,7 +9,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Roommates.Infrastructure.Models
 {
-    public class Post : BaseModel, IPersistentEntity
+    public class Post : BaseModel, IEntityAuthorship
     {
         [Required]
         public string Title { get; set; }
@@ -26,11 +26,13 @@ namespace Roommates.Infrastructure.Models
         public Guid LocationId { get; set; }
 
         [Required]
-        public long ViewedCount { get; set; } = 0;
+        public long ViewsCount { get; set; } = 0;
 
         [Required]
-        [ForeignKey(nameof(CreatedByUser))]
-        public Guid CreatedByUserId { get; set; }
+        [ForeignKey(nameof(Author))]
+        public Guid CreatedById { get; set; }
+
+        public Guid? InactivatedById { get; set; }
 
         [Required]
         [Column(TypeName = "varchar(24)")]
@@ -46,14 +48,23 @@ namespace Roommates.Infrastructure.Models
 
         public List<DynamicFeature> DynamicFeatures { get; set; }
 
-        public virtual User CreatedByUser { get; set; }
+        public virtual User Author { get; set; }
 
         public virtual StaticFeatures StaticFeatures { get; set; }
 
         public virtual Location Location { get; set; }
 
         public List<FilePost> AppartmentViewFiles { get; set; }
-
         #endregion
+
+        public void Create(Guid createdById)
+        {
+            CreatedById = createdById;
+        }
+
+        public void Inactivate(Guid inactivatedById)
+        {
+            InactivatedById = inactivatedById;
+        }
     }
 }

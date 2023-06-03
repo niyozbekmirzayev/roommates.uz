@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace Roommates.Api.Data.IRepositories
+namespace Roommates.Api.Data.IRepositories.Base
 {
     public interface IBaseRepository<TEntity, TDbContext> where TEntity : class where TDbContext : DbContext
     {

@@ -5,7 +5,9 @@ using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Converters;
 using Roommates.Api.Data;
 using Roommates.Api.Data.IRepositories;
+using Roommates.Api.Data.IRepositories.Base;
 using Roommates.Api.Data.Repositories;
+using Roommates.Api.Data.Repositories.Base;
 using Roommates.Api.Helpers;
 using Roommates.Api.Interfaces;
 using Roommates.Api.Mapping;
@@ -66,6 +68,9 @@ namespace Roommates.Api
             builder.Services.AddScoped<IEmailRepository, EmailRepository>();
             builder.Services.AddScoped<IFilePostRepository, FilePostRepository>();
             builder.Services.AddScoped<IUserPostRepository, UserPostRepository>();
+            builder.Services.AddScoped<IDynamicFeatureRepository, DynamicFeatureRepository>();
+            builder.Services.AddScoped<IStaticFeaturesRepository, StaticFeaturesRepository>();
+
             builder.Services.AddScoped<IIdentiyService, IdentityService>();
             builder.Services.AddScoped<IEmailService, EmailService>();
             builder.Services.AddScoped<IFileService, FileService>();
@@ -79,6 +84,8 @@ namespace Roommates.Api
 
             builder.Services.AddControllers().AddNewtonsoftJson(opts => opts
                     .SerializerSettings.Converters.Add(new StringEnumConverter()));
+
+            /*builder.Services.AddControllers().AddNewtonsoftJson();*/
 
             #region JWT Authentication
             var key = Encoding.UTF8.GetBytes(builder.Configuration.GetSection("JWT:Key").Value);

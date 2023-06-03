@@ -1,16 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Roommates.Api.ViewModels.Base;
 
 namespace Roommates.Api.ViewModels
 {
-    public class LocationViewModel
+    public class ViewLocationViewModel : BaseViewModel
     {
-        [Required]
         public string Name { get; set; }
 
-        [Required]
         public double Latitude { get; set; }
 
-        [Required]
         public double Longitude { get; set; }
     }
 }

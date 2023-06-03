@@ -102,11 +102,11 @@ namespace Roommates.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("AuthorUserId")
-                        .HasColumnType("uuid");
-
                     b.Property<byte[]>("Content")
                         .HasColumnType("bytea");
+
+                    b.Property<Guid>("CreatedById")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
@@ -117,6 +117,9 @@ namespace Roommates.Api.Migrations
 
                     b.Property<string>("Extension")
                         .HasColumnType("text");
+
+                    b.Property<Guid?>("InactivatedById")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime?>("InactivatedDate")
                         .HasColumnType("timestamp with time zone");
@@ -136,7 +139,7 @@ namespace Roommates.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AuthorUserId");
+                    b.HasIndex("CreatedById");
 
                     b.ToTable("Files", "roomates");
                 });
@@ -177,9 +180,6 @@ namespace Roommates.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("AuthorUserId")
-                        .HasColumnType("uuid");
-
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
 
@@ -198,8 +198,6 @@ namespace Roommates.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AuthorUserId");
-
                     b.ToTable("Locations", "roomates");
                 });
 
@@ -209,7 +207,7 @@ namespace Roommates.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("CreatedByUserId")
+                    b.Property<Guid>("CreatedById")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedDate")
@@ -222,6 +220,9 @@ namespace Roommates.Api.Migrations
                     b.Property<string>("EntityState")
                         .IsRequired()
                         .HasColumnType("varchar(24)");
+
+                    b.Property<Guid?>("InactivatedById")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime?>("InactivatedDate")
                         .HasColumnType("timestamp with time zone");
@@ -240,12 +241,12 @@ namespace Roommates.Api.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<long>("ViewedCount")
+                    b.Property<long>("ViewsCount")
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedByUserId");
+                    b.HasIndex("CreatedById");
 
                     b.HasIndex("LocationId");
 
@@ -314,9 +315,6 @@ namespace Roommates.Api.Migrations
                     b.Property<DateTime?>("Birthdate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("ClientType")
-                        .HasColumnType("varchar(24)");
-
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
 
@@ -334,6 +332,9 @@ namespace Roommates.Api.Migrations
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<string>("Gender")
+                        .HasColumnType("varchar(24)");
 
                     b.Property<DateTime?>("InactivatedDate")
                         .HasColumnType("timestamp with time zone");
@@ -419,13 +420,13 @@ namespace Roommates.Api.Migrations
 
             modelBuilder.Entity("Roommates.Infrastructure.Models.File", b =>
                 {
-                    b.HasOne("Roommates.Infrastructure.Models.User", "AuthorUser")
+                    b.HasOne("Roommates.Infrastructure.Models.User", "Author")
                         .WithMany()
-                        .HasForeignKey("AuthorUserId")
+                        .HasForeignKey("CreatedById")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("AuthorUser");
+                    b.Navigation("Author");
                 });
 
             modelBuilder.Entity("Roommates.Infrastructure.Models.FilePost", b =>
@@ -447,22 +448,11 @@ namespace Roommates.Api.Migrations
                     b.Navigation("Post");
                 });
 
-            modelBuilder.Entity("Roommates.Infrastructure.Models.Location", b =>
-                {
-                    b.HasOne("Roommates.Infrastructure.Models.User", "AuthorUser")
-                        .WithMany()
-                        .HasForeignKey("AuthorUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("AuthorUser");
-                });
-
             modelBuilder.Entity("Roommates.Infrastructure.Models.Post", b =>
                 {
-                    b.HasOne("Roommates.Infrastructure.Models.User", "CreatedByUser")
+                    b.HasOne("Roommates.Infrastructure.Models.User", "Author")
                         .WithMany()
-                        .HasForeignKey("CreatedByUserId")
+                        .HasForeignKey("CreatedById")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -472,7 +462,7 @@ namespace Roommates.Api.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("CreatedByUser");
+                    b.Navigation("Author");
 
                     b.Navigation("Location");
                 });

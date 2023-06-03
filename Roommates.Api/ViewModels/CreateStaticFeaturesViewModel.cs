@@ -4,11 +4,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Roommates.Api.ViewModels
 {
-    public class StaticFeaturesViewModel
+    public class CreateStaticFeaturesViewModel
     {
-        [Required]
-        PostType PostType { get; set; } = PostType.Apartment;
-
         [Required]
         public decimal Price { get; set; }
 
@@ -21,7 +18,7 @@ namespace Roommates.Api.ViewModels
         [Required]
         public ClientType PreferedClientType { get; set; } = ClientType.All;
 
-        public PricePeriodType? PricePeriodType { get; set; }
+        public PricePeriodType? PricePeriodType { get; set; } = Infrastructure.Enums.PricePeriodType.Monthly;
 
         [Required]
         public CurrencyType CurrencyType { get; set; }

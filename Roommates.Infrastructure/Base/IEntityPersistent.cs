@@ -2,9 +2,9 @@
 
 namespace Roommates.Infrastructure.Base
 {
-    public interface IPersistentEntity
+    public interface IEntityPersistent
     {
-        EntityState EntityState { get; set; }
+        public EntityState EntityState { get; set; }
 
         public DateTime? InactivatedDate { get; set; }
     }

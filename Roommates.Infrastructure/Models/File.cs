@@ -9,7 +9,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Roommates.Infrastructure.Models
 {
-    public class File : BaseModel, IPersistentEntity
+    public class File : BaseModel, IEntityAuthorship
     {
         [Required]
         public string Name { get; set; }
@@ -21,22 +21,33 @@ namespace Roommates.Infrastructure.Models
         public string? MimeType { get; set; }
 
         [Required]
-        [Column(TypeName = "varchar(24)")]
-        public EntityState EntityState { get; set; } = EntityState.Active;
+        public bool IsTemporary { get; set; } = false;
+
+        [Required]
+        [ForeignKey(nameof(Author))]
+        public Guid CreatedById { get; set; }
 
         public DateTime? InactivatedDate { get; set; }
 
-        [Required]
-        [ForeignKey(nameof(AuthorUser))]
-        public Guid AuthorUserId { get; set; }
+        public Guid? InactivatedById { get; set; }
 
-        [Required]
-        public bool IsTemporary { get; set; } = false;
+        [Column(TypeName = "varchar(24)")]
+        public EntityState EntityState { get; set; } = EntityState.Active;
 
         #region ForeignKeys
 
-        public virtual User AuthorUser { get; set; }
+        public virtual User Author { get; set; }
 
         #endregion
+
+        public void Create(Guid createdById)
+        {
+            CreatedById = createdById;
+        }
+
+        public void Inactivate(Guid inactivatedById)
+        {
+            InactivatedById = inactivatedById;
+        }
     }
 }

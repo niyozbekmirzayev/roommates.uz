@@ -1,4 +1,4 @@
-﻿namespace Roommates.Api.Data.IRepositories
+﻿namespace Roommates.Api.Data.IRepositories.Base
 {
     public interface IUnitOfWorkRepository
     {
@@ -8,5 +8,9 @@
         public IUserRepository UserRepository { get; }
         public IEmailRepository EmailRepository { get; }
         public IFilePostRepository FilePostRepository { get; }
+
+        public IDynamicFeatureRepository DynamicFeatureRepository { get; }
+
+        public IStaticFeaturesRepository StaticFeaturesRepository { get; }
     }
 }

@@ -1,9 +1,9 @@
-﻿namespace Roommates.Api.ViewModels
-{
-    public class PreviewUserViewModel
-    {
-        public Guid Id { get; set; }
+﻿using Roommates.Api.ViewModels.Base;
 
+namespace Roommates.Api.ViewModels
+{
+    public class PreviewUserViewModel : BaseViewModel
+    {
         public string FirstName { get; set; }
 
         public string LastName { get; set; }

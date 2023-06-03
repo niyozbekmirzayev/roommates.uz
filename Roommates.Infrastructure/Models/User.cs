@@ -10,7 +10,7 @@ using File = Roommates.Infrastructure.Models.File;
 
 namespace Roommates.Infrastructure.Models
 {
-    public class User : BaseModel, IPersistentEntity
+    public class User : BaseModel, IEntityPersistent
     {
         [Required]
         public string FirstName { get; set; }
@@ -18,7 +18,7 @@ namespace Roommates.Infrastructure.Models
         public string? LastName { get; set; }
 
         [Column(TypeName = "varchar(24)")]
-        public ClientType? ClientType { get; set; }
+        public Gender? Gender { get; set; }
 
         public DateTime? Birthdate { get; set; }
 
@@ -50,6 +50,7 @@ namespace Roommates.Infrastructure.Models
         public List<Email> EmailVerifications { get; set; }
 
         public virtual File? ProfilePicture { get; set; }
+
         public DateTime? InactivatedDate { get; set; }
 
         #endregion

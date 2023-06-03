@@ -8,19 +8,24 @@ namespace Roommates.Api.Mapping
     {
         public MappingConfig()
         {
-            CreateMap<CreateUserViewModel, User>().ReverseMap();
-            CreateMap<CreatePostViewModel, Post>()
+            CreateMap<User, CreateUserViewModel>().ReverseMap();
+            CreateMap<Post, CreatePostViewModel>().ReverseMap()
                 .ForMember(dest => dest.AppartmentViewFiles, opt => opt.Ignore())
                 .ReverseMap();
 
-            CreateMap<Location, LocationViewModel>().ReverseMap();
-            CreateMap<GetFileViewModel, FilePost>().ReverseMap();
+            CreateMap<Location, CreateLocationViewModel>().ReverseMap();
+            CreateMap<Location, ViewLocationViewModel>().ReverseMap();
+
+            CreateMap<FilePost, GetFileViewModel>().ReverseMap();
             CreateMap<User, PreviewUserViewModel>().ReverseMap();
 
-            CreateMap<Post, ViewPostViewModel>()
-                .ForMember(des => des.AuthorUser, opt => opt.MapFrom(src => src.CreatedByUser))
-                .ForMember(des => des.AppartmentViewFiles, opt => opt.MapFrom(src => src.AppartmentViewFiles))
-                .ReverseMap();
+            CreateMap<DynamicFeature, CreateDynamicFeatureViewModel>().ReverseMap();
+            CreateMap<StaticFeatures, CreateStaticFeaturesViewModel>().ReverseMap();
+
+            CreateMap<StaticFeatures, ViewStaticFeaturesViewModel>().ReverseMap();
+            CreateMap<DynamicFeature, ViewDynamicFeatureViewModel>().ReverseMap();
+
+            CreateMap<Post, ViewPostViewModel>().ReverseMap();
         }
     }
 }

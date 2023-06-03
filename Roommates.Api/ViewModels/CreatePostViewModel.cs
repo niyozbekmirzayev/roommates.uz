@@ -1,4 +1,6 @@
-﻿using Roommates.Infrastructure.Enums;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Roommates.Infrastructure.Enums;
 using System.ComponentModel.DataAnnotations;
 
 namespace Roommates.Api.ViewModels
@@ -8,31 +10,20 @@ namespace Roommates.Api.ViewModels
         [Required]
         public string Title { get; set; }
 
+        [Required]
         public string Description { get; set; }
 
         [Required]
-        public LocationViewModel Location { get; set; }
-
-        public string Address { get; set; }
+        public PostType PostType { get; set; } = PostType.Apartment;
 
         [Required]
-        public decimal Price { get; set; }
+        public CreateLocationViewModel Location { get; set; }
 
         [Required]
-        public short RoomsCount { get; set; }
+        public CreateStaticFeaturesViewModel StaticFeatures { get; set; }
 
-        bool IsForSelling { get; set; } = false;
-
-        public ClientType PreferedUserGender { get; set; } = ClientType.All;
-
-        public PricePeriodType PricePeriodType { get; set; } = PricePeriodType.Monthly;
-
-        [Required]
-        public CurrencyType CurrencyType { get; set; }
+        public ICollection<CreateDynamicFeatureViewModel> DynamicFeatures { get; set; }
 
         public ICollection<SaveFileViewModel> AppartmentViewFiles { get; set; }
-
-        public StaticFeaturesViewModel StaticFeatures { get; set; }
-        //public IColleaction<>
     }
 }

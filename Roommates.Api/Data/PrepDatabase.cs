@@ -6,6 +6,7 @@ namespace Roommates.Api.Data
 {
     public class PrepDatabase
     {
+        public const string SCHEMA_NAME = "roomates";
         public readonly IConfiguration configuration;
         public readonly ApplicationDbContext dbContext;
 
@@ -14,6 +15,7 @@ namespace Roommates.Api.Data
             this.configuration = configuration;
             this.dbContext = dbContext;
 
+            //CreateScheme(SCHEMA_NAME);
             SeedData();
         }
 
@@ -53,7 +55,7 @@ namespace Roommates.Api.Data
                             Id = Guid.Parse("3fc263c0-9093-4848-ac96-c8a828345dee"),
                             FirstName = "Clear",
                             LastName = "Adams",
-                            ClientType = ClientType.Female,
+                            Gender = Gender.Female,
                             Birthdate = DateTime.UtcNow,
                             PhoneNumber = "7857485748",
                             EmailAddress = "clearadms@gmail.com",
@@ -71,7 +73,7 @@ namespace Roommates.Api.Data
                             FirstName = "John",
                             LastName = "Doe",
                             Birthdate = DateTime.UtcNow,
-                            ClientType = ClientType.Male,
+                            Gender = Gender.Male,
                             PhoneNumber = "7857353448",
                             EmailAddress = "johndoe@gmail.com",
                             EmailVerifiedDate = DateTime.UtcNow,
@@ -104,12 +106,11 @@ namespace Roommates.Api.Data
                                 Name = "New York, Wall Street, 54",
                                 Latitude = 38.8951,
                                 Longitude = -77.0364,
-                                AuthorUserId = users.First().Id
                              },
                              Title = "Appartment with 2 rooms for renting",
                              Description = "Good and peaceful place",
-                             ViewedCount = 1,
-                             CreatedByUserId = users.First().Id,
+                             ViewsCount = 1,
+                             CreatedById = users.First().Id,
                         }
                     };
 
@@ -131,5 +132,42 @@ namespace Roommates.Api.Data
                 }
             }
         }
+
+        /* public void CreateScheme(string schemaName) 
+         {
+             var schemas = GetSchemas();
+
+             bool schemaExists = schemas.Contains(schemaName);
+             if (!schemaExists) 
+             {
+                 dbContext.Database.Migrate();
+                 dbContext.SaveChanges();
+             }
+
+         }
+
+         public List<string> GetSchemas()
+         {
+             var schemas = new List<string>();
+
+             using (var connection = dbContext.Database.GetDbConnection())
+             {
+                 connection.Open();
+
+                 var command = connection.CreateCommand();
+                 command.CommandText = "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA";
+
+                 using (var reader = command.ExecuteReader())
+                 {
+                     while (reader.Read())
+                     {
+                         var schemaName = reader.GetString(0);
+                         schemas.Add(schemaName);
+                     }
+                 }
+             }
+
+             return schemas;
+         }*/
     }
 }

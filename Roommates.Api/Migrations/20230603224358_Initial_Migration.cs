@@ -1,15 +1,33 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace Roommates.Api.Migrations
 {
-    public partial class InitialMigration : Migration
+    public partial class Initial_Migration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.EnsureSchema(
                 name: "roomates");
+
+            migrationBuilder.CreateTable(
+                name: "Locations",
+                schema: "roomates",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    Latitude = table.Column<double>(type: "double precision", nullable: false),
+                    Longitude = table.Column<double>(type: "double precision", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Locations", x => x.Id);
+                });
 
             migrationBuilder.CreateTable(
                 name: "DynamicFeatures",
@@ -76,10 +94,11 @@ namespace Roommates.Api.Migrations
                     Extension = table.Column<string>(type: "text", nullable: true),
                     Content = table.Column<byte[]>(type: "bytea", nullable: true),
                     MimeType = table.Column<string>(type: "text", nullable: true),
-                    EntityState = table.Column<string>(type: "varchar(24)", nullable: false),
-                    InactivatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    AuthorUserId = table.Column<Guid>(type: "uuid", nullable: false),
                     IsTemporary = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedById = table.Column<Guid>(type: "uuid", nullable: false),
+                    InactivatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    InactivatedById = table.Column<Guid>(type: "uuid", nullable: true),
+                    EntityState = table.Column<string>(type: "varchar(24)", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
@@ -96,7 +115,7 @@ namespace Roommates.Api.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     FirstName = table.Column<string>(type: "text", nullable: false),
                     LastName = table.Column<string>(type: "text", nullable: true),
-                    ClientType = table.Column<string>(type: "varchar(24)", nullable: true),
+                    Gender = table.Column<string>(type: "varchar(24)", nullable: true),
                     Birthdate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     PhoneNumber = table.Column<string>(type: "text", nullable: true),
                     PhoneNumberVerifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
@@ -122,31 +141,6 @@ namespace Roommates.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Locations",
-                schema: "roomates",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    Latitude = table.Column<double>(type: "double precision", nullable: false),
-                    Longitude = table.Column<double>(type: "double precision", nullable: false),
-                    AuthorUserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Locations", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Locations_Users_AuthorUserId",
-                        column: x => x.AuthorUserId,
-                        principalSchema: "roomates",
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Posts",
                 schema: "roomates",
                 columns: table => new
@@ -155,8 +149,9 @@ namespace Roommates.Api.Migrations
                     Title = table.Column<string>(type: "text", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: false),
                     LocationId = table.Column<Guid>(type: "uuid", nullable: false),
-                    ViewedCount = table.Column<long>(type: "bigint", nullable: false),
-                    CreatedByUserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ViewsCount = table.Column<long>(type: "bigint", nullable: false),
+                    CreatedById = table.Column<Guid>(type: "uuid", nullable: false),
+                    InactivatedById = table.Column<Guid>(type: "uuid", nullable: true),
                     EntityState = table.Column<string>(type: "varchar(24)", nullable: false),
                     PostStatus = table.Column<string>(type: "varchar(24)", nullable: false),
                     InactivatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
@@ -174,8 +169,8 @@ namespace Roommates.Api.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Posts_Users_CreatedByUserId",
-                        column: x => x.CreatedByUserId,
+                        name: "FK_Posts_Users_CreatedById",
+                        column: x => x.CreatedById,
                         principalSchema: "roomates",
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -268,22 +263,16 @@ namespace Roommates.Api.Migrations
                 column: "PostId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Files_AuthorUserId",
+                name: "IX_Files_CreatedById",
                 schema: "roomates",
                 table: "Files",
-                column: "AuthorUserId");
+                column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Locations_AuthorUserId",
-                schema: "roomates",
-                table: "Locations",
-                column: "AuthorUserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Posts_CreatedByUserId",
+                name: "IX_Posts_CreatedById",
                 schema: "roomates",
                 table: "Posts",
-                column: "CreatedByUserId");
+                column: "CreatedById");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Posts_LocationId",
@@ -357,10 +346,10 @@ namespace Roommates.Api.Migrations
                 onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_Files_Users_AuthorUserId",
+                name: "FK_Files_Users_CreatedById",
                 schema: "roomates",
                 table: "Files",
-                column: "AuthorUserId",
+                column: "CreatedById",
                 principalSchema: "roomates",
                 principalTable: "Users",
                 principalColumn: "Id",
@@ -370,7 +359,7 @@ namespace Roommates.Api.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_Files_Users_AuthorUserId",
+                name: "FK_Files_Users_CreatedById",
                 schema: "roomates",
                 table: "Files");
 

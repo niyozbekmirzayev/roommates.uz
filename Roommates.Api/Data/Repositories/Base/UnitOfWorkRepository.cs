@@ -1,6 +1,7 @@
 ﻿using Roommates.Api.Data.IRepositories;
+using Roommates.Api.Data.IRepositories.Base;
 
-namespace Roommates.Api.Data.Repositories
+namespace Roommates.Api.Data.Repositories.Base
 {
     public class UnitOfWorkRepository : IUnitOfWorkRepository
     {
@@ -10,6 +11,8 @@ namespace Roommates.Api.Data.Repositories
             IUserRepository userRepository,
             IEmailRepository emailRepository,
             IFilePostRepository filePostRepository,
+            IDynamicFeatureRepository dynamicFeatureRepository,
+            IStaticFeaturesRepository staticFeaturesRepository,
             ILocationRepository locationRepository)
         {
             FileRepository = fileRepository;
@@ -18,6 +21,8 @@ namespace Roommates.Api.Data.Repositories
             UserRepository = userRepository;
             EmailRepository = emailRepository;
             FilePostRepository = filePostRepository;
+            DynamicFeatureRepository = dynamicFeatureRepository;
+            StaticFeaturesRepository = staticFeaturesRepository;
         }
 
         public IFileRepository FileRepository { get; }
@@ -27,5 +32,9 @@ namespace Roommates.Api.Data.Repositories
         public IEmailRepository EmailRepository { get; }
 
         public IFilePostRepository FilePostRepository { get; }
+
+        public IStaticFeaturesRepository StaticFeaturesRepository { get; }
+
+        public IDynamicFeatureRepository DynamicFeatureRepository { get; }
     }
 }

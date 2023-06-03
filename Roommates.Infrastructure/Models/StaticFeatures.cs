@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Roommates.Infrastructure.Models
 {
-    public class StaticFeatures : BaseModel, IPersistentEntity
+    public class StaticFeatures : BaseModel, IEntityPersistent
     {
         [Required]
         [ForeignKey(nameof(Post))]

@@ -20,7 +20,7 @@ namespace Roommates.Api.ViewModels
         [Compare(nameof(Password), ErrorMessage = "Password does not match")]
         public string ConfirmPassword { get; set; }
 
-        public ClientType? Gender { get; set; }
+        public Gender? Gender { get; set; }
 
         public string Bio { get; set; }
 

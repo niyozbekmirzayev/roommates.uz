@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using MimeKit;
 using Roommates.Api.Data.IRepositories;
+using Roommates.Api.Data.IRepositories.Base;
 using Roommates.Api.Helpers;
 using Roommates.Api.Interfaces;
 using Roommates.Infrastructure.Response;
@@ -50,7 +51,7 @@ namespace Roommates.Api.Services
                 Name = file.FileName,
                 Extension = Path.GetExtension(file.FileName),
                 MimeType = MimeTypes.GetMimeType(file.FileName),
-                AuthorUserId = currentUserId,
+                CreatedById = currentUserId,
                 Content = fileData,
                 IsTemporary = true
             };

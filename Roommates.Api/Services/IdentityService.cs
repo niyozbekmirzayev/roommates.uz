@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Roommates.Api.Data.IRepositories;
+using Roommates.Api.Data.IRepositories.Base;
 using Roommates.Api.Helpers;
 using Roommates.Api.Interfaces;
 using Roommates.Api.ViewModels;

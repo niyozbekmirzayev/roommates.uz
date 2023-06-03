@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Roommates.Api.Data.IRepositories;
+using Roommates.Api.Data.IRepositories.Base;
 using Roommates.Api.Interfaces;
 
 namespace Roommates.Api.Services
