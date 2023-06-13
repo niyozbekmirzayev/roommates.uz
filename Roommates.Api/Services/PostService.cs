@@ -112,7 +112,7 @@ namespace Roommates.Api.Services
                 return response;
             }
 
-            var dislikedPost = userPostRepository.GetAll().FirstOrDefault(l => l.UserId == currentUserId && l.Id == postId && l.UserPostRelationType == UserPostRelationType.Disliked);
+            var dislikedPost = userPostRepository.GetAll().FirstOrDefault(l => l.UserId == currentUserId && l.PostId == postId && l.UserPostRelationType == UserPostRelationType.Disliked);
             if (dislikedPost != null)
             {
                 userPostRepository.Remove(dislikedPost);
@@ -129,6 +129,57 @@ namespace Roommates.Api.Services
             if (await postRepository.SaveChangesAsync() > 0)
             {
                 response.Data = newLikedPost.Id;
+                response.ResponseCode = ResponseCodes.SUCCESS_ADD_DATA;
+
+                return response;
+            }
+
+            response.Error = new BaseError("no changes made in the database");
+            response.ResponseCode = ResponseCodes.ERROR_SAVE_DATA;
+
+            return response;
+        }
+
+        public async Task<BaseResponse> DislikePostAsync(Guid postId) 
+        {
+            var response = new BaseResponse();
+            var currentUserId = WebHelper.GetUserId(httpContextAccessor.HttpContext);
+
+            bool isPostExist = postRepository.GetAll().Any(l => l.Id == postId);
+            if (!isPostExist)
+            {
+                response.Error = new BaseError("post not found", ErrorCodes.NotFoud);
+                response.ResponseCode = ResponseCodes.ERROR_NOT_FOUND_DATA;
+
+                return response;
+            }
+
+            bool isAlreadyDisliked = userPostRepository.GetAll().Any(l => l.UserId == currentUserId && l.PostId == postId && l.UserPostRelationType == UserPostRelationType.Disliked);
+            if (isAlreadyDisliked)
+            {
+                response.Error = new BaseError("post is already disliked", ErrorCodes.Conflict);
+                response.ResponseCode = ResponseCodes.ERROR_DUPLICATE_DATA;
+
+                return response;
+            }
+
+            var likedPost = userPostRepository.GetAll().FirstOrDefault(l => l.UserId == currentUserId && l.PostId == postId && l.UserPostRelationType == UserPostRelationType.Liked);
+            if (likedPost != null)
+            {
+                userPostRepository.Remove(likedPost);
+            }
+
+            var newDislikedPost = new UserPost
+            {
+                PostId = postId,
+                UserId = currentUserId,
+                UserPostRelationType = UserPostRelationType.Disliked,
+            };
+            newDislikedPost = await userPostRepository.AddAsync(newDislikedPost);
+
+            if (await postRepository.SaveChangesAsync() > 0)
+            {
+                response.Data = newDislikedPost.Id;
                 response.ResponseCode = ResponseCodes.SUCCESS_ADD_DATA;
 
                 return response;
@@ -182,6 +233,9 @@ namespace Roommates.Api.Services
                     postView.IsLiked = isLiked;
                     postView.IsDisliked = IsDisliked;
 
+                    postView.LikesCount = userPostRepository.GetAll().Count(l => l.PostId == postId && l.UserPostRelationType == UserPostRelationType.Liked);
+                    postView.DislikesCount = userPostRepository.GetAll().Count(l => l.PostId == postId && l.UserPostRelationType == UserPostRelationType.Disliked);
+
                     response.Data = postView;
                     response.ResponseCode = ResponseCodes.SUCCESS_GET_DATA;
 
@@ -201,6 +255,9 @@ namespace Roommates.Api.Services
                 var postView = mapper.Map<ViewPostViewModel>(post);
                 postView.IsLiked = isLiked;
                 postView.IsDisliked = IsDisliked;
+
+                postView.LikesCount = userPostRepository.GetAll().Count(l => l.PostId == postId && l.UserPostRelationType == UserPostRelationType.Liked);
+                postView.DislikesCount = userPostRepository.GetAll().Count(l => l.PostId == postId && l.UserPostRelationType == UserPostRelationType.Disliked);
 
                 response.Data = postView;
                 response.ResponseCode = ResponseCodes.SUCCESS_GET_DATA;

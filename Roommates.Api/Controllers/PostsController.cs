@@ -35,5 +35,11 @@ namespace Roommates.Api.Controllers
         {
             return WebHelper.SentResponseWithStatusCode(this, await postService.LikePostAsync(postId));
         }
+
+        [HttpPost]
+        public async Task<IActionResult> DislikePost(Guid postId)
+        {
+            return WebHelper.SentResponseWithStatusCode(this, await postService.DislikePostAsync(postId));
+        }
     }
 }

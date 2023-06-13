@@ -7,6 +7,8 @@ namespace Roommates.Api.Interfaces
     {
         Task<BaseResponse> CreatePostAsync(CreatePostViewModel viewModel);
         Task<BaseResponse> LikePostAsync(Guid postId);
+
+        Task<BaseResponse> DislikePostAsync(Guid postId);
         Task<BaseResponse> ViewPostAsync(Guid postId);
     }
 }
