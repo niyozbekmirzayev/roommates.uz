@@ -21,6 +21,9 @@ namespace Roommates.Api.ViewModels
 
         public long ViewsCount { get; set; }
 
+        public long LikesCount { get; set; }
+        public long DislikesCount { get; set; }
+
         public bool IsLiked { get; set; }
 
         public bool IsDisliked { get; set; }
