@@ -5,6 +5,7 @@ using Roommates.Api.Data.IRepositories;
 using Roommates.Api.Data.IRepositories.Base;
 using Roommates.Api.Helpers;
 using Roommates.Api.Interfaces;
+using Roommates.Api.Services.Base;
 using Roommates.Api.ViewModels;
 using Roommates.Infrastructure.Enums;
 using Roommates.Infrastructure.Models;
@@ -21,8 +22,8 @@ namespace Roommates.Api.Services
         private const string EMAIL_SUBJECT_USER_REMOVAL = "Verify account removal";
         private const string EMAIL_SUBJECT_PASSWORD_RECOVERY = "Recovery you password";
 
-        private readonly IUserRepository userRepository;
-        private readonly IEmailService emailService;
+        private readonly IUserRepository _userRepository;
+        private readonly IEmailService _emailService;
 
         public IdentityService(
             IUserRepository userRepository,
@@ -33,15 +34,15 @@ namespace Roommates.Api.Services
             IHttpContextAccessor httpContextAccessor,
             IConfiguration configuration) : base(httpContextAccessor, mapper, configuration, unitOfWorkRepository, logger)
         {
-            this.userRepository = userRepository;
-            this.emailService = emailService;
+            this._userRepository = userRepository;
+            this._emailService = emailService;
         }
 
         public async Task<BaseResponse> CreateTokenAsync(CreateTokenViewModel createTokenView)
         {
             var response = new BaseResponse();
 
-            var user = await userRepository.GetAll().FirstOrDefaultAsync(u => u.EmailAddress.ToLower() == createTokenView.Email.ToLower() &&
+            var user = await _userRepository.GetAll().FirstOrDefaultAsync(u => u.EmailAddress.ToLower() == createTokenView.Email.ToLower() &&
                                                     u.Password == createTokenView.Password.ToSHA256());
 
             if (user == null)
@@ -69,10 +70,10 @@ namespace Roommates.Api.Services
                     new Claim(ClaimTypes.MobilePhone, user.PhoneNumber ??  string.Empty),
             };
 
-            var issuer = configuration.GetSection("JWT:Issuer").Value;
-            var audience = configuration.GetSection("JWT:Audience").Value;
-            var key = configuration.GetSection("JWT:Key").Value;
-            var expireTime = configuration.GetSection("JWT:Expire").Value;
+            var issuer = _configuration.GetSection("JWT:Issuer").Value;
+            var audience = _configuration.GetSection("JWT:Audience").Value;
+            var key = _configuration.GetSection("JWT:Key").Value;
+            var expireTime = _configuration.GetSection("JWT:Expire").Value;
 
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
@@ -92,7 +93,7 @@ namespace Roommates.Api.Services
         public async Task<BaseResponse> CreateUserAsync(CreateUserViewModel createUserView)
         {
             var response = new BaseResponse();
-            bool isEmailDuplicated = userRepository.GetAll().Any(l => l.EmailAddress == createUserView.EmailAddress);
+            bool isEmailDuplicated = _userRepository.GetAll().Any(l => l.EmailAddress == createUserView.EmailAddress);
             if (isEmailDuplicated)
             {
                 response.Error = new BaseError("email is duplicated", code: ErrorCodes.Conflict);
@@ -101,10 +102,10 @@ namespace Roommates.Api.Services
                 return response;
             }
 
-            var user = mapper.Map<User>(createUserView);
+            var user = _mapper.Map<User>(createUserView);
             user.Password = user.Password.ToSHA256();
 
-            var emailExpirationTime = int.Parse(configuration.GetSection("EmailExpirationPeriod").Value);
+            var emailExpirationTime = int.Parse(_configuration.GetSection("EmailExpirationPeriod").Value);
             user.EmailVerifications = new List<Email>
             {
                 new Email()
@@ -114,7 +115,7 @@ namespace Roommates.Api.Services
                     EmailAddress = user.EmailAddress,
                 }
             };
-            var createdUser = await userRepository.AddAsync(user);
+            var createdUser = await _userRepository.AddAsync(user);
 
             var verificationEmailBody = GetEmailVerificationEmailBody(user.EmailVerifications.FirstOrDefault(), user);
             var emailView = new EmailViewModel
@@ -124,9 +125,9 @@ namespace Roommates.Api.Services
                 Body = verificationEmailBody,
             };
 
-            await emailService.SendEmailAsync(emailView);
+            await _emailService.SendEmailAsync(emailView);
 
-            if (await userRepository.SaveChangesAsync() > 0)
+            if (await _userRepository.SaveChangesAsync() > 0)
             {
                 response.Data = createdUser.Id;
                 response.ResponseCode = ResponseCodes.SUCCESS_ADD_DATA;
@@ -144,9 +145,9 @@ namespace Roommates.Api.Services
         {
             var response = new BaseResponse();
 
-            Guid currentUserId = WebHelper.GetUserId(httpContextAccessor.HttpContext);
+            Guid currentUserId = WebHelper.GetUserId(_httpContextAccessor.HttpContext);
 
-            var currentUser = await unitOfWorkRepository.UserRepository.GetAsync(currentUserId);
+            var currentUser = await _unitOfWorkRepository.UserRepository.GetAsync(currentUserId);
             if (currentUser == null)
             {
                 response.ResponseCode = ResponseCodes.ERROR_NOT_FOUND_DATA;
@@ -164,7 +165,7 @@ namespace Roommates.Api.Services
                 return response;
             }
 
-            var emailExpirationTime = int.Parse(configuration.GetSection("EmailExpirationPeriod").Value);
+            var emailExpirationTime = int.Parse(_configuration.GetSection("EmailExpirationPeriod").Value);
             var userRemovalEmail = new Email()
             {
                 Type = EmailType.UserRemoval,
@@ -173,7 +174,7 @@ namespace Roommates.Api.Services
                 EmailAddress = currentUser.EmailAddress,
             };
 
-            var email = await unitOfWorkRepository.EmailRepository.AddAsync(userRemovalEmail);
+            var email = await _unitOfWorkRepository.EmailRepository.AddAsync(userRemovalEmail);
 
             var emailBody = GetUserRemovalEmailBody(email, currentUser);
             var emailView = new EmailViewModel
@@ -183,10 +184,10 @@ namespace Roommates.Api.Services
                 Body = emailBody,
             };
 
-            await emailService.SendEmailAsync(emailView);
+            await _emailService.SendEmailAsync(emailView);
 
 
-            if (await unitOfWorkRepository.EmailRepository.SaveChangesAsync() > 0)
+            if (await _unitOfWorkRepository.EmailRepository.SaveChangesAsync() > 0)
             {
                 response.ResponseCode = ResponseCodes.SUCCESS_ADD_DATA;
                 response.Data = email.Id;
@@ -204,7 +205,7 @@ namespace Roommates.Api.Services
         {
             var response = new BaseResponse();
 
-            var user = userRepository.GetAll().FirstOrDefault(l => l.EmailAddress.ToLower() == emailAddress.ToLower());
+            var user = _userRepository.GetAll().FirstOrDefault(l => l.EmailAddress.ToLower() == emailAddress.ToLower());
             if (user == null)
             {
                 response.ResponseCode = ResponseCodes.ERROR_NOT_FOUND_DATA;
@@ -213,7 +214,7 @@ namespace Roommates.Api.Services
                 return response;
             }
 
-            var emailExpirationTime = int.Parse(configuration.GetSection("EmailExpirationPeriod").Value);
+            var emailExpirationTime = int.Parse(_configuration.GetSection("EmailExpirationPeriod").Value);
             var passwordRecoveryEmail = new Email()
             {
                 Type = EmailType.PasswordRecovery,
@@ -222,7 +223,7 @@ namespace Roommates.Api.Services
                 EmailAddress = user.EmailAddress,
             };
 
-            var email = await unitOfWorkRepository.EmailRepository.AddAsync(passwordRecoveryEmail);
+            var email = await _unitOfWorkRepository.EmailRepository.AddAsync(passwordRecoveryEmail);
 
             var emailBody = GetPasswordRecoveryEmailBody(email, user);
             var emailView = new EmailViewModel
@@ -232,9 +233,9 @@ namespace Roommates.Api.Services
                 Body = emailBody,
             };
 
-            await emailService.SendEmailAsync(emailView);
+            await _emailService.SendEmailAsync(emailView);
 
-            if (await unitOfWorkRepository.EmailRepository.SaveChangesAsync() > 0)
+            if (await _unitOfWorkRepository.EmailRepository.SaveChangesAsync() > 0)
             {
                 response.ResponseCode = ResponseCodes.SUCCESS_ADD_DATA;
                 response.Data = email.Id;
@@ -252,9 +253,9 @@ namespace Roommates.Api.Services
         {
             var response = new BaseResponse();
 
-            Guid currentUserId = WebHelper.GetUserId(httpContextAccessor.HttpContext);
+            Guid currentUserId = WebHelper.GetUserId(_httpContextAccessor.HttpContext);
 
-            var currentUser = await unitOfWorkRepository.UserRepository.GetAsync(currentUserId);
+            var currentUser = await _unitOfWorkRepository.UserRepository.GetAsync(currentUserId);
             if (currentUser == null)
             {
                 response.ResponseCode = ResponseCodes.ERROR_NOT_FOUND_DATA;
@@ -272,9 +273,9 @@ namespace Roommates.Api.Services
             }
 
             currentUser.Password = updatePasswordView.NewPassword.ToSHA256();
-            userRepository.Update(currentUser);
+            _userRepository.Update(currentUser);
 
-            if (await unitOfWorkRepository.EmailRepository.SaveChangesAsync() > 0)
+            if (await _unitOfWorkRepository.EmailRepository.SaveChangesAsync() > 0)
             {
                 response.ResponseCode = ResponseCodes.SUCCESS_UPDATE_DATA;
                 response.Data = currentUser.Id;
@@ -291,7 +292,7 @@ namespace Roommates.Api.Services
         public async Task<BaseResponse> VerifyEmailAsync(string verificationCode)
         {
             var response = new BaseResponse();
-            var email = await unitOfWorkRepository.EmailRepository.GetAll().Include(l => l.User)
+            var email = await _unitOfWorkRepository.EmailRepository.GetAll().Include(l => l.User)
                                 .FirstOrDefaultAsync(s => s.VerificationCode == verificationCode &&
                                                           s.Type == EmailType.EmailVerification);
 
@@ -320,9 +321,9 @@ namespace Roommates.Api.Services
 
             email.VerifiedDate = DateTime.UtcNow;
             email.User.EmailVerifiedDate = email.VerifiedDate;
-            unitOfWorkRepository.EmailRepository.Update(email);
+            _unitOfWorkRepository.EmailRepository.Update(email);
 
-            if (await userRepository.SaveChangesAsync() > 0)
+            if (await _userRepository.SaveChangesAsync() > 0)
             {
                 response.ResponseCode = ResponseCodes.SUCCESS_VERIFIED_DATA;
 
@@ -339,7 +340,7 @@ namespace Roommates.Api.Services
         {
             var response = new BaseResponse();
 
-            var email = await unitOfWorkRepository.EmailRepository.GetAll().Include(l => l.User)
+            var email = await _unitOfWorkRepository.EmailRepository.GetAll().Include(l => l.User)
                 .FirstOrDefaultAsync(l => l.VerificationCode == verificationCode && l.Type == EmailType.UserRemoval);
 
             if (email == null)
@@ -367,10 +368,10 @@ namespace Roommates.Api.Services
 
             email.VerifiedDate = DateTime.UtcNow;
 
-            userRepository.Remove(email.User);
-            unitOfWorkRepository.EmailRepository.Update(email);
+            _userRepository.Remove(email.User);
+            _unitOfWorkRepository.EmailRepository.Update(email);
 
-            if (await userRepository.SaveChangesAsync() > 0)
+            if (await _userRepository.SaveChangesAsync() > 0)
             {
                 response.ResponseCode = ResponseCodes.SUCCESS_DELETE_DATA;
 
@@ -387,7 +388,7 @@ namespace Roommates.Api.Services
         {
             var response = new BaseResponse();
 
-            var email = await unitOfWorkRepository.EmailRepository.GetAll().Include(l => l.User)
+            var email = await _unitOfWorkRepository.EmailRepository.GetAll().Include(l => l.User)
                .FirstOrDefaultAsync(l => l.VerificationCode == recoverPasswordView.VerificatinCode && l.Type == EmailType.PasswordRecovery);
 
             if (email == null)
@@ -423,12 +424,12 @@ namespace Roommates.Api.Services
             }
 
             email.VerifiedDate = DateTime.UtcNow;
-            unitOfWorkRepository.EmailRepository.Update(email);
+            _unitOfWorkRepository.EmailRepository.Update(email);
 
             email.User.Password = recoverPasswordView.NewPassword.ToSHA256();
-            userRepository.Update(email.User);
+            _userRepository.Update(email.User);
 
-            if (await userRepository.SaveChangesAsync() > 0)
+            if (await _userRepository.SaveChangesAsync() > 0)
             {
                 response.ResponseCode = ResponseCodes.SUCCESS_UPDATE_DATA;
 
@@ -444,7 +445,7 @@ namespace Roommates.Api.Services
         // Need to rethink about when front is ready
         private string GetEmailVerificationEmailBody(Email emailVerification, User user)
         {
-            string localIpAddress = httpContextAccessor.HttpContext.Request.Host.Value.ToString();
+            string localIpAddress = _httpContextAccessor.HttpContext.Request.Host.Value.ToString();
             string confirmationLink = $"https://{localIpAddress}/api/Identity/VerifyEmail?verifactionCode={emailVerification.VerificationCode}";
 
             var htmlEmailBody = $"<!DOCTYPE html>" +
@@ -468,7 +469,7 @@ namespace Roommates.Api.Services
 
         private string GetUserRemovalEmailBody(Email emailVerification, User user)
         {
-            string localIpAddress = httpContextAccessor.HttpContext.Request.Host.Value.ToString();
+            string localIpAddress = _httpContextAccessor.HttpContext.Request.Host.Value.ToString();
             string confirmationLink = $"https://{localIpAddress}/api/Identity/VerifyUserRemovalEmail?verifactionCode={emailVerification.VerificationCode}";
 
             var htmlEmailBody = "<!DOCTYPE html>" +
@@ -493,7 +494,7 @@ namespace Roommates.Api.Services
 
         private string GetPasswordRecoveryEmailBody(Email emailVerification, User user)
         {
-            string localIpAddress = httpContextAccessor.HttpContext.Request.Host.Value.ToString();
+            string localIpAddress = _httpContextAccessor.HttpContext.Request.Host.Value.ToString();
             string confirmationLink = $"https://{localIpAddress}/api/Identity/RecoverPassword?verifactionCode={emailVerification.VerificationCode}";
 
             var htmlEmailBody = $"<!DOCTYPE html>" +

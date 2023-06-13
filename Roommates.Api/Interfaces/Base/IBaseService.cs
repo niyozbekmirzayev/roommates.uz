@@ -1,4 +1,4 @@
-﻿namespace Roommates.Api.Interfaces
+﻿namespace Roommates.Api.Interfaces.Base
 {
     public interface IBaseService
     {
