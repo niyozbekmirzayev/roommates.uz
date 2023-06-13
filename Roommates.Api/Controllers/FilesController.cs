@@ -10,17 +10,17 @@ namespace Roommates.Api.Controllers
     [Route("api/[controller]/[action]")]
     public class FilesController : Controller
     {
-        private readonly IFileService fileService;
+        private readonly IFileService _fileService;
 
         public FilesController(IFileService fileService)
         {
-            this.fileService = fileService;
+            this._fileService = fileService;
         }
 
         [HttpPost]
         public async Task<IActionResult> UploadFile(IFormFile file)
         {
-            return WebHelper.SentResponseWithStatusCode(this, await fileService.UploadFile(file));
+            return WebHelper.SentResponseWithStatusCode(this, await _fileService.UploadFile(file));
         }
     }
 }

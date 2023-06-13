@@ -1,4 +1,5 @@
-﻿using Roommates.Infrastructure.Response;
+﻿using Roommates.Api.Interfaces.Base;
+using Roommates.Infrastructure.Response;
 
 namespace Roommates.Api.Interfaces
 {

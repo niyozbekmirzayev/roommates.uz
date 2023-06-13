@@ -4,6 +4,7 @@ using Roommates.Api.Data.IRepositories;
 using Roommates.Api.Data.IRepositories.Base;
 using Roommates.Api.Helpers;
 using Roommates.Api.Interfaces;
+using Roommates.Api.Services.Base;
 using Roommates.Infrastructure.Response;
 using File = Roommates.Infrastructure.Models.File;
 
@@ -11,7 +12,7 @@ namespace Roommates.Api.Services
 {
     public class FileService : BaseService, IFileService
     {
-        private IFileRepository fileRepository;
+        private IFileRepository _fileRepository;
 
         public FileService(IHttpContextAccessor httpContextAccessor,
             IMapper mapper,
@@ -20,7 +21,7 @@ namespace Roommates.Api.Services
             IFileRepository fileRepository,
             ILogger logger) : base(httpContextAccessor, mapper, configuration, unitOfWorkRepository, logger)
         {
-            this.fileRepository = fileRepository;
+            this._fileRepository = fileRepository;
         }
 
         public async Task<BaseResponse> UploadFile(IFormFile file)
@@ -35,7 +36,7 @@ namespace Roommates.Api.Services
                 return response;
             }
 
-            var currentUserId = WebHelper.GetUserId(httpContextAccessor.HttpContext);
+            var currentUserId = WebHelper.GetUserId(_httpContextAccessor.HttpContext);
 
             byte[] fileData;
             using (var memoryStream = new MemoryStream())
@@ -56,9 +57,9 @@ namespace Roommates.Api.Services
                 IsTemporary = true
             };
 
-            newFile = await fileRepository.AddAsync(newFile);
+            newFile = await _fileRepository.AddAsync(newFile);
 
-            if (await fileRepository.SaveChangesAsync() > 0)
+            if (await _fileRepository.SaveChangesAsync() > 0)
             {
                 response.Data = newFile.Id;
                 response.ResponseCode = ResponseCodes.SUCCESS_ADD_DATA;
