@@ -226,12 +226,9 @@ namespace Roommates.Api.Services
 
                 if (await postRepository.SaveChangesAsync() > 0)
                 {
-                    bool isLiked = userPostRepository.GetAll().Any(l => l.UserId == currentUserId && l.PostId == postId && l.UserPostRelationType == UserPostRelationType.Liked);
-                    bool IsDisliked = userPostRepository.GetAll().Any(l => l.UserId == currentUserId && l.PostId == postId && l.UserPostRelationType == UserPostRelationType.Disliked);
-
                     var postView = mapper.Map<ViewPostViewModel>(post);
-                    postView.IsLiked = isLiked;
-                    postView.IsDisliked = IsDisliked;
+                    postView.IsLiked = userPostRepository.GetAll().Any(l => l.UserId == currentUserId && l.PostId == postId && l.UserPostRelationType == UserPostRelationType.Liked); ;
+                    postView.IsDisliked = userPostRepository.GetAll().Any(l => l.UserId == currentUserId && l.PostId == postId && l.UserPostRelationType == UserPostRelationType.Disliked); ;
 
                     postView.LikesCount = userPostRepository.GetAll().Count(l => l.PostId == postId && l.UserPostRelationType == UserPostRelationType.Liked);
                     postView.DislikesCount = userPostRepository.GetAll().Count(l => l.PostId == postId && l.UserPostRelationType == UserPostRelationType.Disliked);
@@ -249,12 +246,9 @@ namespace Roommates.Api.Services
             }
             else
             {
-                bool isLiked = userPostRepository.GetAll().Any(l => l.UserId == currentUserId && l.PostId == postId && l.UserPostRelationType == UserPostRelationType.Liked);
-                bool IsDisliked = userPostRepository.GetAll().Any(l => l.UserId == currentUserId && l.PostId == postId && l.UserPostRelationType == UserPostRelationType.Disliked);
-
                 var postView = mapper.Map<ViewPostViewModel>(post);
-                postView.IsLiked = isLiked;
-                postView.IsDisliked = IsDisliked;
+                postView.IsLiked = userPostRepository.GetAll().Any(l => l.UserId == currentUserId && l.PostId == postId && l.UserPostRelationType == UserPostRelationType.Liked); ;
+                postView.IsDisliked = userPostRepository.GetAll().Any(l => l.UserId == currentUserId && l.PostId == postId && l.UserPostRelationType == UserPostRelationType.Disliked); ;
 
                 postView.LikesCount = userPostRepository.GetAll().Count(l => l.PostId == postId && l.UserPostRelationType == UserPostRelationType.Liked);
                 postView.DislikesCount = userPostRepository.GetAll().Count(l => l.PostId == postId && l.UserPostRelationType == UserPostRelationType.Disliked);
