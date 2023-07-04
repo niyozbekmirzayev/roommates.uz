@@ -47,7 +47,7 @@ namespace Roommates.Api.Services
 
             if (user == null)
             {
-                response.Error = new BaseError("invalid email or password", code: ErrorCodes.NotFoud);
+                response.Error = new BaseError("invalid email or password", code: ErrorCodes.NotFound);
                 response.ResponseCode = ResponseCodes.ERROR_NOT_FOUND_DATA;
 
                 return response;
@@ -151,7 +151,7 @@ namespace Roommates.Api.Services
             if (currentUser == null)
             {
                 response.ResponseCode = ResponseCodes.ERROR_NOT_FOUND_DATA;
-                response.Error = new BaseError("current user not found", ErrorCodes.NotFoud);
+                response.Error = new BaseError("current user not found", ErrorCodes.NotFound);
 
                 return response;
             }
@@ -209,7 +209,7 @@ namespace Roommates.Api.Services
             if (user == null)
             {
                 response.ResponseCode = ResponseCodes.ERROR_NOT_FOUND_DATA;
-                response.Error = new BaseError("user not found", ErrorCodes.NotFoud);
+                response.Error = new BaseError("user not found", ErrorCodes.NotFound);
 
                 return response;
             }
@@ -259,7 +259,7 @@ namespace Roommates.Api.Services
             if (currentUser == null)
             {
                 response.ResponseCode = ResponseCodes.ERROR_NOT_FOUND_DATA;
-                response.Error = new BaseError("current user not found", ErrorCodes.NotFoud);
+                response.Error = new BaseError("current user not found", ErrorCodes.NotFound);
 
                 return response;
             }
@@ -298,7 +298,7 @@ namespace Roommates.Api.Services
 
             if (email == null)
             {
-                response.Error = new BaseError("verification code not found", code: ErrorCodes.NotFoud);
+                response.Error = new BaseError("verification code not found", code: ErrorCodes.NotFound);
                 response.ResponseCode = ResponseCodes.ERROR_NOT_FOUND_DATA;
 
                 return response;
@@ -345,7 +345,7 @@ namespace Roommates.Api.Services
 
             if (email == null)
             {
-                response.Error = new BaseError("verification code not found", code: ErrorCodes.NotFoud);
+                response.Error = new BaseError("verification code not found", code: ErrorCodes.NotFound);
                 response.ResponseCode = ResponseCodes.ERROR_NOT_FOUND_DATA;
 
                 return response;
@@ -393,7 +393,7 @@ namespace Roommates.Api.Services
 
             if (email == null)
             {
-                response.Error = new BaseError("verification code not found", code: ErrorCodes.NotFoud);
+                response.Error = new BaseError("verification code not found", code: ErrorCodes.NotFound);
                 response.ResponseCode = ResponseCodes.ERROR_NOT_FOUND_DATA;
 
                 return response;
@@ -401,7 +401,7 @@ namespace Roommates.Api.Services
 
             if (email.User == null)
             {
-                response.Error = new BaseError("user not found", code: ErrorCodes.NotFoud);
+                response.Error = new BaseError("user not found", code: ErrorCodes.NotFound);
                 response.ResponseCode = ResponseCodes.ERROR_NOT_FOUND_DATA;
 
                 return response;

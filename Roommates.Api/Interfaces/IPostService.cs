@@ -10,6 +10,8 @@ namespace Roommates.Api.Interfaces
         Task<BaseResponse> LikePostAsync(Guid postId);
 
         Task<BaseResponse> DislikePostAsync(Guid postId);
-        Task<BaseResponse> ViewPostAsync(Guid postId);
+        Task<BaseResponse> GetPostAsync(Guid postId);
+
+        Task<BaseResponse> GetPostsAsync(int skip, int take);
     }
 }
