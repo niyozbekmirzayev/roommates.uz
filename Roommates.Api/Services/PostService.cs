@@ -49,30 +49,52 @@ namespace Roommates.Api.Services
             newPost.Create(currentUserId);
             newPost = await _postRepository.AddAsync(newPost);
 
-            if (viewModel.AppartmentViewFiles != null && viewModel.AppartmentViewFiles.Any(l => l.ActionType == ActionType.Create))
+            bool mainFileExists = viewModel.AppartmentViewFiles.Any(l => l.IsMain == true && l.ActionType == ActionType.Create);
+            if (!mainFileExists)
             {
-                var filesViews = viewModel.AppartmentViewFiles.Where(l => l.ActionType == ActionType.Create).OrderBy(l => l.Sequence).ToList();
-                var files = _unitOfWorkRepository.FileRepository.GetAll().Where(l => filesViews.Select(l => l.FileId).Contains(l.Id));
+                response.Error = new BaseError("MainFile is required", ErrorCodes.BadRequest);
+                response.ResponseCode = ResponseCodes.ERROR_INVALID_DATA;
 
-                short sequence = 1;
-                foreach (var fileView in filesViews)
+                return response;
+            }
+
+            var filesViews = viewModel.AppartmentViewFiles.Where(l => l.ActionType == ActionType.Create).OrderBy(l => l.Sequence).ToList();
+            var files = _unitOfWorkRepository.FileRepository.GetAll().Where(l => filesViews.Select(l => l.FileId).Contains(l.Id));
+
+            short sequence = 1;
+            foreach (var fileView in filesViews)
+            {
+                var file = files.FirstOrDefault(l => l.Id == fileView.FileId);
+                if (file != null)
                 {
-                    var file = files.FirstOrDefault(l => l.Id == fileView.FileId);
-                    if (file != null)
+                    file.IsTemporary = false;
+                    _unitOfWorkRepository.FileRepository.Update(file);
+
+                    var newFilePost = new FilePost()
                     {
-                        file.IsTemporary = false;
-                        _unitOfWorkRepository.FileRepository.Update(file);
+                        FileId = file.Id,
+                        PostId = newPost.Id,
+                        Sequence = sequence,
+                        IsMain = fileView.IsMain
+                    };
 
-                        var newFilePost = new FilePost()
-                        {
-                            FileId = file.Id,
-                            PostId = newPost.Id,
-                            Sequence = sequence
-                        };
-
-                        await _unitOfWorkRepository.FilePostRepository.AddAsync(newFilePost);
+                    if (fileView.IsMain)
+                    {
+                        newFilePost.Sequence = null;
+                    }
+                    else 
+                    {
                         sequence++;
                     }
+
+                    await _unitOfWorkRepository.FilePostRepository.AddAsync(newFilePost);
+                }
+                else 
+                {
+                    response.Error = new BaseError("file not found", ErrorCodes.NotFound);
+                    response.ResponseCode = ResponseCodes.ERROR_NOT_FOUND_DATA;
+
+                    return response;
                 }
             }
 
@@ -98,7 +120,7 @@ namespace Roommates.Api.Services
             bool isPostExist = _postRepository.GetAll().Any(l => l.Id == postId);
             if (!isPostExist)
             {
-                response.Error = new BaseError("post not found", ErrorCodes.NotFoud);
+                response.Error = new BaseError("post not found", ErrorCodes.NotFound);
                 response.ResponseCode = ResponseCodes.ERROR_NOT_FOUND_DATA;
 
                 return response;
@@ -149,7 +171,7 @@ namespace Roommates.Api.Services
             bool isPostExist = _postRepository.GetAll().Any(l => l.Id == postId);
             if (!isPostExist)
             {
-                response.Error = new BaseError("post not found", ErrorCodes.NotFoud);
+                response.Error = new BaseError("post not found", ErrorCodes.NotFound);
                 response.ResponseCode = ResponseCodes.ERROR_NOT_FOUND_DATA;
 
                 return response;
@@ -192,20 +214,21 @@ namespace Roommates.Api.Services
             return response;
         }
 
-        public async Task<BaseResponse> ViewPostAsync(Guid postId)
+        public async Task<BaseResponse> GetPostAsync(Guid postId)
         {
             var response = new BaseResponse();
             var currentUserId = WebHelper.GetUserId(_httpContextAccessor.HttpContext);
 
-            var post = _postRepository.GetAll().Include(l => l.AppartmentViewFiles)
-                                              .Include(l => l.Author)
-                                              .Include(l => l.Location)
-                                              .Include(l => l.DynamicFeatures)
-                                              .Include(l => l.StaticFeatures)
-                                              .FirstOrDefault(l => l.Id == postId);
+            var post = _postRepository.GetAll()
+                                      .Include(l => l.AppartmentViewFiles)
+                                      .Include(l => l.Author)
+                                      .Include(l => l.Location)
+                                      .Include(l => l.DynamicFeatures)
+                                      .Include(l => l.StaticFeatures)
+                                      .FirstOrDefault(l => l.Id == postId);
             if (post == null)
             {
-                response.Error = new BaseError("post not found", ErrorCodes.NotFoud);
+                response.Error = new BaseError("post not found", ErrorCodes.NotFound);
                 response.ResponseCode = ResponseCodes.ERROR_NOT_FOUND_DATA;
 
                 return response;
@@ -233,6 +256,7 @@ namespace Roommates.Api.Services
 
                     postView.LikesCount = _userPostRepository.GetAll().Count(l => l.PostId == postId && l.UserPostRelationType == UserPostRelationType.Liked);
                     postView.DislikesCount = _userPostRepository.GetAll().Count(l => l.PostId == postId && l.UserPostRelationType == UserPostRelationType.Disliked);
+                    postView.ViewsCount = _userPostRepository.GetAll().Count(l => l.PostId == postId && l.UserPostRelationType == UserPostRelationType.Viewed);
 
                     response.Data = postView;
                     response.ResponseCode = ResponseCodes.SUCCESS_GET_DATA;
@@ -253,12 +277,49 @@ namespace Roommates.Api.Services
 
                 postView.LikesCount = _userPostRepository.GetAll().Count(l => l.PostId == postId && l.UserPostRelationType == UserPostRelationType.Liked);
                 postView.DislikesCount = _userPostRepository.GetAll().Count(l => l.PostId == postId && l.UserPostRelationType == UserPostRelationType.Disliked);
+                postView.ViewsCount = _userPostRepository.GetAll().Count(l => l.PostId == postId && l.UserPostRelationType == UserPostRelationType.Viewed);
 
                 response.Data = postView;
                 response.ResponseCode = ResponseCodes.SUCCESS_GET_DATA;
 
                 return response;
             }
+        }
+
+        public async Task<BaseResponse> GetPostsAsync(int skip, int take) 
+        {
+            var response = new BaseResponse();
+            var currentUserId = WebHelper.GetUserId(_httpContextAccessor.HttpContext);
+
+            var posts = await _postRepository.GetAll()
+                                            .Include(l => l.AppartmentViewFiles.Where(j => j.IsMain))
+                                            .Include(l => l.Author)
+                                            .Include(l => l.Location)
+                                            .Include(l => l.StaticFeatures)
+                                            .OrderByDescending(l => l.CreatedDate)
+                                            .Skip(skip).Take(take)
+                                            .ToListAsync();
+
+            var postViews = new List<ViewPostViewModel>();
+
+            foreach (var post in posts) 
+            {
+                var postView = _mapper.Map<ViewPostViewModel>(post);
+
+                postView.IsLiked = _userPostRepository.GetAll().Any(l => l.UserId == currentUserId && l.PostId == post.Id && l.UserPostRelationType == UserPostRelationType.Liked); ;
+                postView.IsDisliked = _userPostRepository.GetAll().Any(l => l.UserId == currentUserId && l.PostId == post.Id && l.UserPostRelationType == UserPostRelationType.Disliked); ;
+
+                postView.LikesCount = _userPostRepository.GetAll().Count(l => l.PostId == post.Id && l.UserPostRelationType == UserPostRelationType.Liked);
+                postView.DislikesCount = _userPostRepository.GetAll().Count(l => l.PostId == post.Id && l.UserPostRelationType == UserPostRelationType.Disliked);
+                postView.ViewsCount = _userPostRepository.GetAll().Count(l => l.PostId == post.Id && l.UserPostRelationType == UserPostRelationType.Viewed);
+
+                postViews.Add(postView);
+            }
+
+            response.Data = postViews;
+            response.ResponseCode = ResponseCodes.SUCCESS_GET_DATA;
+
+            return response;
         }
     }
 }
