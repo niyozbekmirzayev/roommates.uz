@@ -38,9 +38,9 @@ namespace Roommates.Api.Services
             this._emailService = emailService;
         }
 
-        public async Task<BaseResponse> CreateTokenAsync(CreateTokenViewModel createTokenView)
+        public async Task<BaseResponse<GeneratedTokenViewModel>> CreateTokenAsync(CreateTokenViewModel createTokenView)
         {
-            var response = new BaseResponse();
+            var response = new BaseResponse<GeneratedTokenViewModel>();
 
             var user = await _userRepository.GetAll().FirstOrDefaultAsync(u => u.EmailAddress.ToLower() == createTokenView.Email.ToLower() &&
                                                     u.Password == createTokenView.Password.ToSHA256());
@@ -77,12 +77,17 @@ namespace Roommates.Api.Services
 
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+            var expirationData = DateTime.UtcNow.AddMinutes(double.Parse(expireTime));
 
             var tokenDescriptor = new JwtSecurityToken(issuer, audience, claims,
-                                                        expires: DateTime.Now.AddMinutes(double.Parse(expireTime)),
+                                                        expires: expirationData,
                                                         signingCredentials: credentials);
 
-            string token = new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
+            var token = new GeneratedTokenViewModel()
+            {
+                Token = new JwtSecurityTokenHandler().WriteToken(tokenDescriptor),
+                ExpirationData = expirationData
+            };
 
             response.Data = token;
             response.ResponseCode = ResponseCodes.SUCCESS_GENERATE_TOKEN;
@@ -90,9 +95,9 @@ namespace Roommates.Api.Services
             return response;
         }
 
-        public async Task<BaseResponse> CreateUserAsync(CreateUserViewModel createUserView)
+        public async Task<BaseResponse<Guid>> CreateUserAsync(CreateUserViewModel createUserView)
         {
-            var response = new BaseResponse();
+            var response = new BaseResponse<Guid>();
             bool isEmailDuplicated = _userRepository.GetAll().Any(l => l.EmailAddress == createUserView.EmailAddress);
             if (isEmailDuplicated)
             {
@@ -141,9 +146,9 @@ namespace Roommates.Api.Services
             return response;
         }
 
-        public async Task<BaseResponse> CreateUserRemovalEmailAsync(string password)
+        public async Task<BaseResponse<Guid>> CreateUserRemovalEmailAsync(string password)
         {
-            var response = new BaseResponse();
+            var response = new BaseResponse<Guid>();
 
             Guid currentUserId = WebHelper.GetUserId(_httpContextAccessor.HttpContext);
 
@@ -201,9 +206,9 @@ namespace Roommates.Api.Services
             return response;
         }
 
-        public async Task<BaseResponse> CreatePasswordRecoveryEmailAsync(string emailAddress)
+        public async Task<BaseResponse<Guid>> CreatePasswordRecoveryEmailAsync(string emailAddress)
         {
-            var response = new BaseResponse();
+            var response = new BaseResponse<Guid>();
 
             var user = _userRepository.GetAll().FirstOrDefault(l => l.EmailAddress.ToLower() == emailAddress.ToLower());
             if (user == null)
@@ -249,9 +254,9 @@ namespace Roommates.Api.Services
             return response;
         }
 
-        public async Task<BaseResponse> UpdatePasswordAsync(UpdatePasswordViewModel updatePasswordView)
+        public async Task<BaseResponse<bool>> UpdatePasswordAsync(UpdatePasswordViewModel updatePasswordView)
         {
-            var response = new BaseResponse();
+            var response = new BaseResponse<bool>();
 
             Guid currentUserId = WebHelper.GetUserId(_httpContextAccessor.HttpContext);
 
@@ -278,7 +283,7 @@ namespace Roommates.Api.Services
             if (await _unitOfWorkRepository.EmailRepository.SaveChangesAsync() > 0)
             {
                 response.ResponseCode = ResponseCodes.SUCCESS_UPDATE_DATA;
-                response.Data = currentUser.Id;
+                response.Data = true;
 
                 return response;
             }
@@ -289,9 +294,9 @@ namespace Roommates.Api.Services
             return response;
         }
 
-        public async Task<BaseResponse> VerifyEmailAsync(string verificationCode)
+        public async Task<BaseResponse<bool>> VerifyEmailAsync(string verificationCode)
         {
-            var response = new BaseResponse();
+            var response = new BaseResponse<bool>();
             var email = await _unitOfWorkRepository.EmailRepository.GetAll().Include(l => l.User)
                                 .FirstOrDefaultAsync(s => s.VerificationCode == verificationCode &&
                                                           s.Type == EmailType.EmailVerification);
@@ -326,6 +331,7 @@ namespace Roommates.Api.Services
             if (await _userRepository.SaveChangesAsync() > 0)
             {
                 response.ResponseCode = ResponseCodes.SUCCESS_VERIFIED_DATA;
+                response.Data = true;
 
                 return response;
             }
@@ -336,9 +342,9 @@ namespace Roommates.Api.Services
             return response;
         }
 
-        public async Task<BaseResponse> VerifyUserRemovalAsync(string verificationCode)
+        public async Task<BaseResponse<bool>> VerifyUserRemovalAsync(string verificationCode)
         {
-            var response = new BaseResponse();
+            var response = new BaseResponse<bool>();
 
             var email = await _unitOfWorkRepository.EmailRepository.GetAll().Include(l => l.User)
                 .FirstOrDefaultAsync(l => l.VerificationCode == verificationCode && l.Type == EmailType.UserRemoval);
@@ -374,6 +380,7 @@ namespace Roommates.Api.Services
             if (await _userRepository.SaveChangesAsync() > 0)
             {
                 response.ResponseCode = ResponseCodes.SUCCESS_DELETE_DATA;
+                response.Data = true;
 
                 return response;
             }
@@ -384,9 +391,9 @@ namespace Roommates.Api.Services
             return response;
         }
 
-        public async Task<BaseResponse> RecoverPasswordAsync(RecoverPasswordViewModel recoverPasswordView)
+        public async Task<BaseResponse<bool>> RecoverPasswordAsync(RecoverPasswordViewModel recoverPasswordView)
         {
-            var response = new BaseResponse();
+            var response = new BaseResponse<bool>();
 
             var email = await _unitOfWorkRepository.EmailRepository.GetAll().Include(l => l.User)
                .FirstOrDefaultAsync(l => l.VerificationCode == recoverPasswordView.VerificatinCode && l.Type == EmailType.PasswordRecovery);
@@ -432,6 +439,7 @@ namespace Roommates.Api.Services
             if (await _userRepository.SaveChangesAsync() > 0)
             {
                 response.ResponseCode = ResponseCodes.SUCCESS_UPDATE_DATA;
+                response.Data = true;
 
                 return response;
             }

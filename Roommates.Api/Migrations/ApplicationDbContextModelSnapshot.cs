@@ -156,16 +156,13 @@ namespace Roommates.Api.Migrations
                     b.Property<Guid>("FileId")
                         .HasColumnType("uuid");
 
-                    b.Property<bool>("IsMain")
-                        .HasColumnType("boolean");
-
                     b.Property<DateTime?>("LastModifiedDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("PostId")
                         .HasColumnType("uuid");
 
-                    b.Property<short?>("Sequence")
+                    b.Property<short>("Sequence")
                         .HasColumnType("smallint");
 
                     b.HasKey("Id");

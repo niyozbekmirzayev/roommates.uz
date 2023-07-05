@@ -11,9 +11,7 @@ namespace Roommates.Api.ViewModels
         [Required]
         public ActionType ActionType { get; set; }
 
-        public short? Sequence { get; set; }
-
         [Required]
-        public bool IsMain { get; set; }
+        public short Sequence { get; set; }
     }
 }
