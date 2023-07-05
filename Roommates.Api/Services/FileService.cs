@@ -24,9 +24,9 @@ namespace Roommates.Api.Services
             this._fileRepository = fileRepository;
         }
 
-        public async Task<BaseResponse> UploadFile(IFormFile file)
+        public async Task<BaseResponse<Guid>> UploadFile(IFormFile file)
         {
-            var response = new BaseResponse();
+            var response = new BaseResponse<Guid>();
 
             if (file == null || file.Length == 0)
             {

@@ -6,19 +6,26 @@ namespace Roommates.Api.Helpers
     {
         public const string CLAIM_USER_ID = "UserId";
 
-        public static IActionResult SentResponseWithStatusCode(Controller controller, dynamic source)
+        public static IActionResult SentResponseWithStatusCode(Controller controller, dynamic response)
         {
-            if (source.Error != null)
+            if (response.Error != null)
             {
-                if (source.Error.Code == 404) return controller.NotFound(source);
-                else if (source.Error.Code == 400) return controller.BadRequest(source);
-                else if (source.Error.Code == 409) return controller.Conflict(source);
-                else if (source.Error.Code == 401) return controller.Unauthorized(source);
+                var errorResponse = new
+                {
+                    Data = (string)null,
+                    response.Error,
+                    response.ResponseCode
+                };
 
-                else return controller.StatusCode(500, source);
+                if (response.Error.Code == 404) return controller.NotFound(errorResponse);
+                else if (response.Error.Code == 400) return controller.BadRequest(errorResponse);
+                else if (response.Error.Code == 409) return controller.Conflict(errorResponse);
+                else if (response.Error.Code == 401) return controller.Unauthorized(errorResponse);
+
+                else return controller.StatusCode(500, errorResponse);
             }
 
-            return controller.Ok(source);
+            return controller.Ok(response);
         }
 
         public static Guid GetUserId(HttpContext httpContext)

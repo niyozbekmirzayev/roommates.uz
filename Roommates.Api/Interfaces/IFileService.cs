@@ -5,6 +5,6 @@ namespace Roommates.Api.Interfaces
 {
     public interface IFileService : IBaseService
     {
-        Task<BaseResponse> UploadFile(IFormFile file);
+        Task<BaseResponse<Guid>> UploadFile(IFormFile file);
     }
 }

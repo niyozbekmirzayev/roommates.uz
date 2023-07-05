@@ -36,9 +36,9 @@ namespace Roommates.Api.Services
             this._userPostRepository = userPostRepository;
         }
 
-        public async Task<BaseResponse> CreatePostAsync(CreatePostViewModel viewModel)
+        public async Task<BaseResponse<Guid>> CreatePostAsync(CreatePostViewModel viewModel)
         {
-            var response = new BaseResponse();
+            var response = new BaseResponse<Guid>();
             var currentUserId = WebHelper.GetUserId(_httpContextAccessor.HttpContext);
 
             var newLocation = _mapper.Map<Location>(viewModel.Location);
@@ -49,10 +49,10 @@ namespace Roommates.Api.Services
             newPost.Create(currentUserId);
             newPost = await _postRepository.AddAsync(newPost);
 
-            bool mainFileExists = viewModel.AppartmentViewFiles.Any(l => l.IsMain == true && l.ActionType == ActionType.Create);
-            if (!mainFileExists)
+            bool anyFileExists = viewModel.AppartmentViewFiles.Any(l => l.ActionType == ActionType.Create);
+            if (!anyFileExists)
             {
-                response.Error = new BaseError("MainFile is required", ErrorCodes.BadRequest);
+                response.Error = new BaseError("file is required", ErrorCodes.BadRequest);
                 response.ResponseCode = ResponseCodes.ERROR_INVALID_DATA;
 
                 return response;
@@ -75,17 +75,9 @@ namespace Roommates.Api.Services
                         FileId = file.Id,
                         PostId = newPost.Id,
                         Sequence = sequence,
-                        IsMain = fileView.IsMain
                     };
 
-                    if (fileView.IsMain)
-                    {
-                        newFilePost.Sequence = null;
-                    }
-                    else 
-                    {
-                        sequence++;
-                    }
+                    sequence++;
 
                     await _unitOfWorkRepository.FilePostRepository.AddAsync(newFilePost);
                 }
@@ -112,9 +104,9 @@ namespace Roommates.Api.Services
             return response;
         }
 
-        public async Task<BaseResponse> LikePostAsync(Guid postId)
+        public async Task<BaseResponse<Guid>> LikePostAsync(Guid postId)
         {
-            var response = new BaseResponse();
+            var response = new BaseResponse<Guid>();
             var currentUserId = WebHelper.GetUserId(_httpContextAccessor.HttpContext);
 
             bool isPostExist = _postRepository.GetAll().Any(l => l.Id == postId);
@@ -163,9 +155,9 @@ namespace Roommates.Api.Services
             return response;
         }
 
-        public async Task<BaseResponse> DislikePostAsync(Guid postId)
+        public async Task<BaseResponse<Guid>> DislikePostAsync(Guid postId)
         {
-            var response = new BaseResponse();
+            var response = new BaseResponse<Guid>();
             var currentUserId = WebHelper.GetUserId(_httpContextAccessor.HttpContext);
 
             bool isPostExist = _postRepository.GetAll().Any(l => l.Id == postId);
@@ -214,9 +206,9 @@ namespace Roommates.Api.Services
             return response;
         }
 
-        public async Task<BaseResponse> GetPostAsync(Guid postId)
+        public async Task<BaseResponse<ViewPostViewModel>> GetPostAsync(Guid postId)
         {
-            var response = new BaseResponse();
+            var response = new BaseResponse<ViewPostViewModel>();
             var currentUserId = WebHelper.GetUserId(_httpContextAccessor.HttpContext);
 
             var post = _postRepository.GetAll()
@@ -257,7 +249,7 @@ namespace Roommates.Api.Services
                     postView.LikesCount = _userPostRepository.GetAll().Count(l => l.PostId == postId && l.UserPostRelationType == UserPostRelationType.Liked);
                     postView.DislikesCount = _userPostRepository.GetAll().Count(l => l.PostId == postId && l.UserPostRelationType == UserPostRelationType.Disliked);
                     postView.ViewsCount = _userPostRepository.GetAll().Count(l => l.PostId == postId && l.UserPostRelationType == UserPostRelationType.Viewed);
-
+        
                     response.Data = postView;
                     response.ResponseCode = ResponseCodes.SUCCESS_GET_DATA;
 
@@ -277,7 +269,6 @@ namespace Roommates.Api.Services
 
                 postView.LikesCount = _userPostRepository.GetAll().Count(l => l.PostId == postId && l.UserPostRelationType == UserPostRelationType.Liked);
                 postView.DislikesCount = _userPostRepository.GetAll().Count(l => l.PostId == postId && l.UserPostRelationType == UserPostRelationType.Disliked);
-                postView.ViewsCount = _userPostRepository.GetAll().Count(l => l.PostId == postId && l.UserPostRelationType == UserPostRelationType.Viewed);
 
                 response.Data = postView;
                 response.ResponseCode = ResponseCodes.SUCCESS_GET_DATA;
@@ -286,13 +277,13 @@ namespace Roommates.Api.Services
             }
         }
 
-        public async Task<BaseResponse> GetPostsAsync(int skip, int take) 
+        public async Task<BaseResponse<IEnumerable<ViewPostViewModel>>> GetPostsAsync(int skip, int take) 
         {
-            var response = new BaseResponse();
+            var response = new BaseResponse<IEnumerable<ViewPostViewModel>>();
             var currentUserId = WebHelper.GetUserId(_httpContextAccessor.HttpContext);
 
             var posts = await _postRepository.GetAll()
-                                            .Include(l => l.AppartmentViewFiles.Where(j => j.IsMain))
+                                            .Include(l => l.AppartmentViewFiles.Where(l => l.Sequence == 1))
                                             .Include(l => l.Author)
                                             .Include(l => l.Location)
                                             .Include(l => l.StaticFeatures)
@@ -311,7 +302,42 @@ namespace Roommates.Api.Services
 
                 postView.LikesCount = _userPostRepository.GetAll().Count(l => l.PostId == post.Id && l.UserPostRelationType == UserPostRelationType.Liked);
                 postView.DislikesCount = _userPostRepository.GetAll().Count(l => l.PostId == post.Id && l.UserPostRelationType == UserPostRelationType.Disliked);
-                postView.ViewsCount = _userPostRepository.GetAll().Count(l => l.PostId == post.Id && l.UserPostRelationType == UserPostRelationType.Viewed);
+
+                postViews.Add(postView);
+            }
+
+            response.Data = postViews;
+            response.ResponseCode = ResponseCodes.SUCCESS_GET_DATA;
+
+            return response;
+        }
+
+        public async Task<BaseResponse<IEnumerable<ViewPostViewModel>>> GetLikedPostsAsync(int skip, int take) 
+        {
+            var response = new BaseResponse<IEnumerable<ViewPostViewModel>>();
+            var currentUserId = WebHelper.GetUserId(_httpContextAccessor.HttpContext);
+
+            var likedPostsIds = await _userPostRepository.GetAll().Where(l => l.UserId == currentUserId && l.UserPostRelationType == UserPostRelationType.Liked)
+                                                        .OrderByDescending(l => l.CreatedDate)
+                                                        .Skip(skip).Take(take)
+                                                        .Select(l => l.PostId).ToListAsync();
+
+            var likedPosts = await _postRepository.GetAll().Where(l => likedPostsIds.Contains(l.Id))
+                                            .Include(l => l.AppartmentViewFiles.Where(l => l.Sequence == 1))
+                                            .Include(l => l.Author)
+                                            .Include(l => l.Location)
+                                            .Include(l => l.StaticFeatures)
+                                            .ToListAsync();
+
+            var postViews = new List<ViewPostViewModel>();
+            foreach (var post in likedPosts)
+            {
+                var postView = _mapper.Map<ViewPostViewModel>(post);
+                postView.IsLiked = true;
+                postView.IsDisliked = false;
+
+                postView.LikesCount = _userPostRepository.GetAll().Count(l => l.PostId == post.Id && l.UserPostRelationType == UserPostRelationType.Liked);
+                postView.DislikesCount = _userPostRepository.GetAll().Count(l => l.PostId == post.Id && l.UserPostRelationType == UserPostRelationType.Disliked);
 
                 postViews.Add(postView);
             }

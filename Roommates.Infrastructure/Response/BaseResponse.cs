@@ -1,8 +1,10 @@
-﻿namespace Roommates.Infrastructure.Response
+﻿using Microsoft.Extensions.Logging.Abstractions;
+
+namespace Roommates.Infrastructure.Response
 {
-    public class BaseResponse
+    public class BaseResponse<T>
     {
-        public object Data { get; set; } = null;
+        public T Data { get; set; }
         public string ResponseCode { get; set; }
         public BaseError Error { get; set; }
     }

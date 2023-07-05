@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Roommates.Api.Helpers;
 using Roommates.Api.Interfaces;
 using Roommates.Api.ViewModels;
+using Roommates.Infrastructure.Response;
 
 namespace Roommates.Api.Controllers
 {
@@ -34,6 +35,12 @@ namespace Roommates.Api.Controllers
         public async Task<IActionResult> GetPosts(int skip, int take) 
         {
             return WebHelper.SentResponseWithStatusCode(this, await postService.GetPostsAsync(skip, take));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetLikedPosts(int skip, int take)
+        {
+            return WebHelper.SentResponseWithStatusCode(this, await postService.GetLikedPostsAsync(skip, take));
         }
 
         [HttpPost]

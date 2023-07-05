@@ -28,7 +28,7 @@ namespace Roommates.Api.Middlewares
 
         public Task HandleExceptionAsync(Exception ex, ILogger logger, HttpContext context)
         {
-            var response = new BaseResponse();
+            var response = new BaseResponse<object>();
 
             response.ResponseCode = ResponseCodes.ERROR_UNEXPECTED_EXCEPTION;
 

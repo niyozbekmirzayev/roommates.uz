@@ -6,12 +6,14 @@ namespace Roommates.Api.Interfaces
 {
     public interface IPostService : IBaseService
     {
-        Task<BaseResponse> CreatePostAsync(CreatePostViewModel viewModel);
-        Task<BaseResponse> LikePostAsync(Guid postId);
+        Task<BaseResponse<Guid>> CreatePostAsync(CreatePostViewModel viewModel);
+        Task<BaseResponse<Guid>> LikePostAsync(Guid postId);
 
-        Task<BaseResponse> DislikePostAsync(Guid postId);
-        Task<BaseResponse> GetPostAsync(Guid postId);
+        Task<BaseResponse<Guid>> DislikePostAsync(Guid postId);
+        Task<BaseResponse<ViewPostViewModel>> GetPostAsync(Guid postId);
 
-        Task<BaseResponse> GetPostsAsync(int skip, int take);
+        Task<BaseResponse<IEnumerable<ViewPostViewModel>>> GetPostsAsync(int skip, int take);
+
+        Task<BaseResponse<IEnumerable<ViewPostViewModel>>> GetLikedPostsAsync(int skip, int take);
     }
 }
